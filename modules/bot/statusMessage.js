@@ -119,6 +119,7 @@ let awaitReady = () => new Promise((res, rej) => client.once('ready', res));
 
 
 // Yeeted from stackoverflow
+// Sauce: https://stackoverflow.com/a/8212878
 function millisecondsToStr (milliseconds) {
     function numberEnding (number) {
         return (number > 1) ? 's' : '';
