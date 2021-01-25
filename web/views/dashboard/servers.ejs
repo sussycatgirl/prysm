@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title>Servers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+        @import url('/assets/loading_icon.css');
+        @import url('/assets/styles/dashboard/servers.css');
+    </style>
+<body>
+    <div class="lds-ellipsis" id="loading"><div></div><div></div><div></div><div></div></div>
+    <div class="servers" id="server-list-enabled"></div>
+    <div class="servers" id="server-list-invite"></div>
+</body>
+<script>
+    if (!'<%= user.id %>') {
+        // Redirect user to login page
+        window.location = `<%-loginUrl%>&state=<%-page_b64%>`
+    } else {
+        (async () => {
+            let servers = (await (await fetch('/api/servers?accessibleOnly=true')).json());
+            
+            document.getElementById('loading').remove(); // Remove the loading thing
+            try {                    
+                let invite = 0, enabled = 0;
+                servers.forEach(server => {
+                    
+                    (server.botIsMember ? enabled++ : invite++);
+                    let invite_url = `<%=inviteURL%>&guild_id=${server.id}`;
+                    if (server.botIsMember || server.memberIsMod) document.getElementById(server.botIsMember ? "server-list-enabled" : "server-list-invite").innerHTML += 
+                        `<div class="server no-select" id="${server.id}">` +
+                            `<img class="server-icon no-select" id="icon-${server.id}" src=${server.icon ? `"https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png?size=64"` : '/assets/no-icon.png'}>` +
+                            `<a class="no-select ellipsis">${server.name}</a>` +
+                            (server.botIsMember ? 
+                                `<div class="open-button noselect" onclick="window.location='/dashboard/server/${server.id}/index.ejs'"><a>Open</a></div>` : 
+                                `<div class="invite-button noselect" target="popup" href="${invite_url}" onclick="window.open('${invite_url}', 'popup', 'width=520,height=690')"><a>Invite</a></div>`) +
+                        `</div>`;
+                });
+                if (enabled > 0) document.getElementById("server-list-enabled").innerHTML =
+                    `<h1>Open Dashboard</h1>` +  document.getElementById("server-list-enabled").innerHTML;
+                
+                if (invite > 0) document.getElementById("server-list-invite").innerHTML =
+                    `<br/><h1>Setup Prysm</h1>` + document.getElementById("server-list-invite").innerHTML;
+            } catch(e) {
+                console.error(e);
+            }
+        })();
+    }
+</script>
+</head>
+
+</html>

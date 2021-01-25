@@ -1,0 +1,6 @@
+{
+    "INFO": "This file stores invite URLs for some large bots, that are used to provide a re-invite URL in kick/ban commands.",
+    "159985870458322944": "https://discord.com/oauth2/authorize?scope=bot&response_type=code&redirect_uri=https%3A%2F%2Fmee6.xyz%2Fguild-oauth&permissions=%%PERMISSIONS%%&client_id=159985415099514880&guild_id=%%GUILDID%%",
+    "155149108183695360": "https://discord.com/oauth2/authorize?client_id=161660517914509312&scope=bot+identify+guilds&response_type=code&redirect_uri=https%3A%2F%2Fdyno.gg%2Freturn&permissions=%%PERMISSIONS%%&guild_id=%%GUILDID%%",
+    "235148962103951360": "https://discord.com/oauth2/authorize?&client_id=235148962103951360&scope=bot&permissions=%%PERMISSIONS%%&guild_id=%%GUILDID%%&response_type=code&redirect_uri=https://carl.gg/api/server_auth"
+}

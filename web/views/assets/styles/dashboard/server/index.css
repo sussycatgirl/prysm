@@ -1,0 +1,205 @@
+@keyframes loadIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+body {
+    background-color: rgb(50, 50, 50);
+    overflow-x: hidden;
+}
+
+.lds-ellipsis {
+    position: fixed;
+    top: 50%;
+    left: calc(50% - 40px);
+    animation: 2s ease-out 0s 1 loadIn;
+    z-index: 100;
+}
+
+.panels {
+    left: calc(50% - 350px);
+    width: 700px;
+    position: absolute;
+    top: 120px;
+}
+
+.title-bar {
+    width: 100%;
+    height: 75px;
+    background-color: rgb(40, 40, 40);
+    border-bottom: rgb(60, 60, 60);
+    border-left: rgb(40, 40, 40);
+    border-right: rgb(40, 40, 40);
+    border-top: rgb(40, 40, 40);
+    border-style: solid;
+    position: sticky;
+    text-align: right;
+}
+.title-bar img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: 12px;
+    right: 12px;
+    object-fit: cover;
+    float: right;
+}
+.title-bar h {
+    font-family: 'Roboto';
+    font-size: 30px;
+    top: 20px;
+    margin-right: 75px;
+    color: #ffffff;
+    white-space: nowrap;
+    width: 50%;
+    position: relative;
+    float: right;
+}
+.title-bar .button {
+    width: 90px;
+    height: 40px;
+    background-color: #3CB289;
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    border-radius: 10px;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+.title-bar .button:hover {
+    transform: scale(1.05);
+}
+.title-bar .button:active {
+    transform: scale(1.1);
+}
+
+.title-bar .button i {
+    color: #ffffff;
+    font-size: 50px;
+    top: -5;
+    left: -5;
+    position: absolute;
+}
+.title-bar .button a {
+    color: #ffffff;
+    font-size: 20px;
+    top: 8px;
+    margin-right: 12px;
+    position: relative;
+    font-family: 'Roboto';
+}
+
+.panel {
+    color: #ffffff;
+    height: 200px;
+    width: 700px;
+    margin-bottom: 20px;
+    background-color: #252729;
+    border-radius: 10px;
+    left: calc(50% - 350px);
+    transition: transform 0.3s;
+}
+
+.panel h {
+    font-family: 'Roboto';
+    font-size: 30px;
+    width: 450px;
+    display: inline-block;
+    margin-left: 200px;
+    margin-top: 25px;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.thumbnail {
+    height: 150px;
+    width: 150px;
+    border-radius: 10%;
+    position: absolute;
+    margin-top: 25px;
+    margin-left: 25px;
+    object-fit: cover;
+}
+
+.channel-name-text {
+    margin-left: 200px;
+    margin-top: 15px;
+    color: #afafaf;
+}
+
+.channel-name-text i {
+    position: absolute;
+}
+
+.channel-name-text a {
+    font-family: 'Roboto';
+    position: absolute;
+    margin-left: 30px;
+    margin-top: 2.5px;
+}
+
+.info-text {
+    margin-left: 200px;
+    margin-top: 45px;
+    color: #afafaf;
+}
+
+.info-text a {
+    font-family: 'Roboto';
+    position: absolute;
+    margin-left: 0px;
+    margin-top: 2.5px;
+}
+
+.media-controls {
+    position: absolute;
+    top: 190px;
+    left: 188px;
+    width: 324px;
+    height: 84px;
+}
+
+.media-controls-button {
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    background-color: rgb(40, 40, 40);
+    border-color: #ffffff;
+    border-width: 2px;
+    border-style: solid;
+    float: left;
+    margin-left: 12px;
+    margin-right: 12px;
+    transition: transform 0.3s;
+}
+
+.media-controls-button:hover {
+    transform: scale(1.05);
+}
+.media-controls-button:active {
+    transform: scale(1.1);
+}
+
+.media-controls-button i {
+    text-align: center;
+    font-size: 50px;
+    margin-left: 15px;
+    margin-top: 14px;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}

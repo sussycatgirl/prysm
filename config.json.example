@@ -1,0 +1,20 @@
+{
+    "token": "Insert bot token here",
+    "test_token": "Add another bot token here that will be used for the test account",
+
+    "prefix": "+",
+    "testPrefix": "-",
+
+    "botOwner": "Owner ID here",
+    "websiteDomain": "https://imverum.github.io/prysm",
+
+    "loggingWebhook": {
+        "id": "Webhook ID",
+        "token": "Webhook access token for debug logging"
+    },
+
+    "spambot_verification": {
+        "guild": "Guild ID",
+        "channel": "Channel ID"
+    }
+}

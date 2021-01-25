@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prysm</title>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+            @import url('assets/styles/index.css');
+        </style>
+    </head>
+    <body>
+        <div id='logged_in' class="logged_in">
+            <lgintext><br/>Successfully logged in. Welcome back, <%= user?.username || 'dipshit' %>.</lgintext>
+        </div>
+
+        <div id='logged_out' class="logged_out">
+            <lgintext><br/>Logged out.</lgintext>
+        </div>
+
+        <div id='lginbutton' style="cursor: pointer; background-color: #7289DA; border-radius: 10px; height: 50px; width: 150px; position: fixed; right: 20px; top: 20px;" onclick="window.location='/oauth2/signin.ejs'">
+            <img src='https://discord.com/assets/28174a34e77bb5e5310ced9f95cb480b.png' style="height: 35px; margin-top: 9px; margin-left: 9px; position: fixed;">
+            <a style="color: white; position: absolute; margin-top: 10px; font-family: 'Roboto'; font-size: 25px; margin-left: 55px; font-weight: bold;">Sign in</a>
+        </div>
+
+        <div id='userbutton' class="userbutton" style="margin-right: 1000px;">
+            <img src='<%= user?.avatarURL %>' style="height: 35px; margin-top: 9px; margin-right: 8px; position: relative; border-radius: 100%; ">
+            <a style="color: white; position: relative; top: -10px; font-family: 'Roboto'; font-size: 20px; margin-right: 0px; font-weight: bold;"><%= user?.username %>#<%= user?.discriminator %></a>
+            <div class="dropdowncontent" id='userdropdown'>
+                <svg href="/oauth2/logout" style="height: 16px; position: absolute; margin-left: 20px; margin-top: 14px;" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.2 513"><title>logout</title><path d="M0,5V507a5,5,0,0,0,5,5H287.54a5,5,0,0,0,5-5V443.88a5,5,0,0,0-5-5H78.17a5,5,0,0,1-5-5V78.17a5,5,0,0,1,5-5H287.58a5,5,0,0,0,5-5L293,5.06A5,5,0,0,0,288,0H5A5,5,0,0,0,0,5Z" transform="translate(0.5 0.5)" style="fill:#fff;stroke:#1d1d1b;stroke-miterlimit:10"/><path d="M117,216.94v70.12a9.82,9.82,0,0,0,9.69,9.94H380.33v90L512,252,380.33,117v90H126.69A9.82,9.82,0,0,0,117,216.94Z" transform="translate(0.5 0.5)" style="fill:#fff;stroke:#1d1d1b;stroke-miterlimit:10"/><path d="M0,512" transform="translate(0.5 0.5)" style="fill:#fff;stroke:#1d1d1b;stroke-miterlimit:10"/><path d="M9.14,502.86" transform="translate(0.5 0.5)" style="fill:#fff;stroke:#1d1d1b;stroke-miterlimit:10"/></svg><a href="/oauth2/logout" style="margin-left: 20px;">Logout</a>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="logo" id="logo">
+                <img src="/assets/prysm-logo-x200.png">
+                <a class="no-select">PRYSM</a>
+                <b class="no-select">THE ALL-IN-ONE DISCORD BOT</b>
+            </div>
+
+            <div class="buttons">
+                <div class="addbot" id="addbot" onclick="window.location='<%= inviteURL %>'">
+                <img src="/assets/plus.png">
+                <a class="no-select">Add to Server</a>
+                </div>
+
+                <div class="dashboard" id="dashboard" onclick="window.location='/dashboard/servers.ejs'">
+                    <img src="/assets/dashboard.png">
+                    <a class="no-select">Dashboard</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            if ('<%= user?.username %>' != '') {
+                document.getElementById('lginbutton').style.opacity = '0%';
+                document.getElementById('userbutton').style.opacity = '100%';
+                document.getElementById('userbutton').style.marginRight = 'unset';
+            }
+
+            var logo = document.getElementById("logo");
+            var content = document.getElementById("content");
+
+            if ('<%= user?.username %>' != '') {
+                document.title = 'Prysm - <%= user?.username %>'
+            }
+
+            var url = new URL(window.location.href);
+            if (url.searchParams.toString().indexOf('logged_in=true') > -1) {
+                document.getElementById('logged_in').style.animationName = 'lginfadeout';
+                setTimeout(function() {
+                    history.replaceState(null, '', '/index.ejs');
+                }, 6000);
+            } else if (url.searchParams.toString().indexOf('logout=true') > -1) {
+                document.getElementById('logged_out').style.animationName = 'lginfadeout';
+                setTimeout(function() {
+                    history.replaceState(null, '', '/index.ejs');
+                }, 6000);
+            }
+        </script>
+    </body>
+</html>

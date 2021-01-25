@@ -1,0 +1,248 @@
+@keyframes lginfadeout {
+    from {
+        margin-top: -15px;
+        opacity: 100%;
+    }
+    99% {
+        margin-top: -55px;
+        opacity: 100%;
+    }
+    to {
+        opacity: 0%;
+        margin-top: -45px;
+    }
+}
+
+@keyframes lginhidden {
+    from {
+        opacity: 0%;
+        margin-top: -45px;
+    }
+    to {
+        opacity: 0%;
+        margin-top: -45px;
+    }
+}
+
+:root {
+    --button-color: #252729;
+    --bg-color: #1d1d1d;/*rgb(50, 50, 50);*/
+}
+
+.dropdowncontent {
+    background-color: #1e1e1e;
+    position: absolute;
+    border-radius: 20px;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    display: none;
+}
+
+.dropdowncontent a {
+    color: white;
+    position: relative;
+    font-family: 'Roboto';
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+    float: none;
+    padding: 1px 20px;
+    text-decoration: none;
+    text-align: left;
+    display: block;
+}
+
+.userbutton {
+    height: 50px;
+    position: fixed;
+    width: fit-content;
+    right: 35px;
+    top: 20px;
+    opacity: 0%;
+}
+
+.userbutton:hover #userdropdown {
+    display: block;
+}
+
+body {
+    /* background-image: linear-gradient(0deg, #202225, #36393f); */
+    background-color: var(--bg-color);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+html {
+    height: 100%;
+}
+
+lgintext {
+    clear: both;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    color: white;
+    line-height: 0px;
+}
+.logo {
+    width: 700px;
+    height: 250px;
+    left: calc(50% - 360px);
+    top: 2%;
+    position: relative;
+    background-color: var(--button-color);
+    border-radius: 20px;
+    padding-bottom: 40px;
+    padding-right: 20px;
+    transition: transform 0.5s;
+}
+
+.logo a {
+    font-size: 140px;
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    position: absolute;
+    top: 10px;
+    left: calc(0% + 200px + 40px);
+}
+
+.logo b {
+    font-size: 45px;
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    position: absolute;
+    bottom: 30px;
+    left: 16px;
+    text-align: center;
+    width: 100%;
+    max-width: 700px;
+}
+.logo img {
+    height: 150px;
+    position: absolute;
+    top: 30px;
+    left: 40px;
+}
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.addbot {
+    width: 280px;
+    height: 50px;
+    left: calc(50% - 360px);
+    top: 50%;
+    position: absolute;
+    background-color: var(--button-color);
+    border-radius: 20px;
+    padding-bottom: 40px;
+    padding-right: 20px;
+    cursor: pointer;
+    transition: opacity 0.3s, left 0.3s, transform 0.5s;
+}
+
+.addbot a {
+    font-size: 32px;
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    position: absolute;
+    top: 23px;
+    left: 75px;
+}
+.addbot img {
+    height: 35px;
+    position: absolute;
+    top: 29px;
+    left: 20px;
+}
+.addbot:hover {
+    transform: scale(1.05);
+}
+
+.dashboard {
+    width: 280px;
+    height: 50px;
+    left: calc(50% + 60px);
+    top: 50%;
+    position: absolute;
+    background-color: var(--button-color);
+    border-radius: 20px;
+    padding-bottom: 40px;
+    padding-right: 20px;
+    cursor: pointer;
+    transition: opacity 0.3s, left 0.3s, transform 0.5s;
+}
+
+.dashboard a {
+    font-size: 32px;
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    position: absolute;
+    top: 23px;
+    left: 100px;
+}
+.dashboard img {
+    height: 35px;
+    position: absolute;
+    top: 29px;
+    left: 30px;
+    pointer-events: none;
+}
+.dashboard:hover {
+    transform: scale(1.05);
+}
+
+.buttons {
+    position: relative;
+    margin-top: 50px;
+}
+
+.content {
+    position: relative;
+    margin: auto;
+    width: 750px;
+    margin-top: calc(10%);
+}
+
+.logged_in {
+    z-index: 100;
+    opacity: 0%;
+    width: 99%;
+    height: 45px; 
+    background-color: 
+    #7289DA; 
+    position: fixed;
+    top: 2px;
+    margin-top: -15px; 
+    border-radius: 10px; 
+    text-align: center; 
+    animation-name: lginhidden; 
+    animation-duration: 1s; 
+    animation-fill-mode: both; 
+    animation-delay: 5s;
+}
+
+.logged_out {
+    z-index: 100;
+    opacity: 0%;
+    width: 99%;
+    height: 45px;
+    background-color: #7289DA;
+    position: fixed;
+    top: 2px;
+    margin-top: -15px;
+    border-radius: 10px;
+    text-align: center;
+    animation-name: lginhidden;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    animation-delay: 5s;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}

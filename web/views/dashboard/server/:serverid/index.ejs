@@ -1,0 +1,204 @@
+<html>
+
+<head>
+    <title><%-guild.name%></title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+        @import url('/assets/loading_icon.css');
+        @import url('/assets/styles/dashboard/server/index.css');
+    </style>
+<body>
+    <div class="title-bar">
+        <div class="button" onclick="window.location='/dashboard/servers'"><i class="material-icons no-select">arrow_left</i><a class="no-select">Back</a></div>
+        <h class="no-select"><%= guild?.name %></h>
+        <img class="no-select" src="<%= guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=256` : '/assets/no-icon.png' %>">
+    </div>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <div class="lds-ellipsis" id="loading"><div></div><div></div><div></div><div></div></div>
+
+    <div class="panels">
+        <div class="panel" style="height: 300px;">
+            <img src="/assets/play-circle-outline.png" class="thumbnail" id="thumbnail">
+            <h class="ellipsis" id="track-title">Connecting...</h>
+            <h class="ellipsis" id="track-author" style="font-size: 20px; margin-top: 5px;"></h>
+            <div class="channel-name-text" title="Voice channel"><i class="material-icons no-select">volume_up</i><a id="channel-name" class="ellipsis no-select">Not connected</a></div>
+            <div class="info-text"><a id="info-text" class="ellipsis no-select"></a></div>
+            <div class="media-controls">
+                <div class="media-controls-button"><i class="material-icons no-select" id="restart_button" onclick="seek(0)">keyboard_backspace</i></div>
+                <div class="media-controls-button"><i class="material-icons no-select" id="pause_button" onclick="pause()">pause</i></div>
+                <div class="media-controls-button"><i class="material-icons no-select" id="skip_button" onclick="skip()">skip_next</i></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    }
+    
+    const createTimestamp = (seconds) => {
+        let h = 0;
+        let m = 0;
+        let s = Math.round(seconds);
+
+        while (s >= 60) {
+            m += 1;
+            s -= 60;
+        }
+
+        while (m >= 60) {
+            h += 1;
+            m -= 60;
+        }
+
+        let str = '';
+        if (h > 0) {
+            if (h >= 10)
+                str += `${h}:`
+            else
+                str += `0${h}:`
+        }
+
+        if (m >= 10)
+            str += `${m}:`
+        else
+            str += `0${m}:`
+
+        if (s >= 10)
+            str += s;
+        else
+            str += `0${s}`
+
+        return str;
+}
+</script>
+<script>
+    let ws;
+    let actionQueued = false;
+    let paused = false;
+    let playing = false;
+    let createWS = async () => {
+        let error = false;
+        let wasPlaying = false;
+        ws = new WebSocket(`wss://${window.location.hostname}/ws/music/<%-guild.id%>`);
+        ws.onopen = () => {
+            error = false;
+            console.log('WS connected');
+            document.getElementById('loading').style.visibility = 'hidden';
+        }
+        ws.onerror = (error) => {
+            playing = false;
+            error = true;
+            console.error(error);
+            console.info('Reconnecting in 5 seconds...');
+            document.getElementById('loading').style.visibility = 'unset';
+            setTimeout(createWS, 5000);
+        }
+        ws.onmessage = (msg) => {
+            if (msg.data == 'RECONNECT') {
+                playing = false;
+                console.log('Reconnect requested');
+                document.getElementById('loading').style.visibility = 'unset';
+                playing = false;
+                ws.close();
+                setTimeout(createWS, 500);
+                return;
+            }
+            if (msg.data == 'DONE') {
+                console.log('Timer reset');
+                actionQueued = false;
+                return;
+            }
+            
+            msg = JSON.parse(b64DecodeUnicode(msg.data));
+            console.log(msg);
+            
+            if (msg.playing == false) {
+                playing = false;
+                paused = false;
+                document.getElementById('track-title').innerHTML = 'Not playing';
+                document.getElementById('channel-name-text') && (document.getElementById('channel-name-text').innerHTML = 'Not connected');
+                document.getElementById('track-author').innerHTML = '';
+                document.getElementById('info-text').innerHTML = '';
+                document.getElementById('thumbnail').src = '/assets/play-circle-outline.png';
+                
+                if (wasPlaying) {
+                    // Reconnect the websocket since for some reason the server-side code doesn't do what I told it to do
+                    console.info('Refreshing');
+                    wasPlaying = false;
+                    seconds = 0;
+                    ws.close();
+                    setTimeout(createWS, 500);
+                }
+            } else {
+                playing = true;
+                wasPlaying = true;
+                paused = msg.paused;
+                document.getElementById('pause_button').innerHTML = paused ? 'play_arrow' : 'pause';
+                seconds = Math.round(msg.progress / 1000 || 0);
+                document.getElementById('track-title').innerHTML = msg.track?.info?.title || 'Not playing';
+                document.getElementById('track-title').title = msg.track?.info?.title || 'Not playing';
+                
+                document.getElementById('track-author').innerHTML = msg.track?.info?.author ? `<z class="no-select">By </z><b>${msg.track?.info?.author}</b><z class="no-select"> • `
+                + `${createTimestamp(seconds)} / ${createTimestamp(Math.round(msg.track?.info?.length / 1000) || 0)}</z>` : '';
+                
+                document.getElementById('channel-name').innerHTML = msg.channel?.name || 'Not connected';
+                
+                document.getElementById('info-text').innerHTML = `${msg.shuffle ? 'Shuffled' : 'Not shuffled'} • `
+                + `${(msg.looping == 'none') ? 'Not looping' : 
+                msg.looping == 'single' ? 'Looping this track' :
+                msg.looping == 'all' ? 'Repeating the queue' : 'Error'}`;
+                
+                document.getElementById('thumbnail').src = msg.thumbnail || '/assets/play-circle-outline.png';
+            }
+        };
+        ws.onclose = (close) => {
+            playing = false;
+            if (error) return;
+            console.log(close);
+            console.info('Reconnecting...');
+            document.getElementById('loading').style.visibility = 'unset';
+            setTimeout(createWS, 1000);
+        }
+    };
+    createWS();
+
+    let seconds = 0; // Tracks the player's location in seconds
+    setInterval(() => {
+        if (playing && !paused) {
+            seconds++;
+            document.getElementById('track-author').innerHTML = document.getElementById('track-author').innerHTML.split(' • ')[0]
+            + `<z class="no-select"> • ${createTimestamp(seconds)}` + ` / ${document.getElementById('track-author').innerHTML.split(' / ').slice(-1)[0]}</z>`;
+        }
+    }, 1000);
+    
+    let pause = () => {
+        if (actionQueued) return;
+        console.info('Pause');
+        ws?.send && ws.send('PAUSE');
+        actionQueued = true;
+        setTimeout(() => actionQueued = false, 1500);
+    }
+    let skip = () => {
+        if (actionQueued) return;
+        console.info('Skip');
+        ws?.send && ws.send('SKIP');
+        actionQueued = true;
+        setTimeout(() => actionQueued = false, 1500);
+    }
+    let seek = (pos) => {
+        if (actionQueued) return;
+        console.info('Seek: ' + pos);
+        ws?.send && ws.send('SEEK:' + pos);
+        actionQueued = true;
+        setTimeout(() => actionQueued = false, 1500);
+    }
+</script>
+</head>
+
+</html>

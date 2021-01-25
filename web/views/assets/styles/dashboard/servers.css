@@ -1,0 +1,106 @@
+
+@keyframes loadIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+body {
+    background-color: rgb(50, 50, 50);
+    overflow-x: hidden;
+}
+
+h1 {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    left: 0;
+    margin-top: 50px;
+    position: relative;
+    text-align: center;
+    top: 5%;
+    width: 100%;
+    font-size: 50;
+}
+
+.servers {
+    color: #ffffff;
+    margin: auto;
+    width: 700px;
+}
+
+.server {
+    color: #ffffff;
+    height: 80px;
+    width: 700px;
+    margin-bottom: 20px;
+    background-color: #252729;
+    border-radius: 10px;
+    left: calc(50% - 350px);
+    transition: transform 0.3s;
+}
+
+.server:hover {
+    transform: scale(1.05);
+}
+
+.server a {
+    white-space: nowrap;
+    font-family: 'Roboto';
+    font-size: 30px;
+    bottom: 15px;
+    max-width: 450px;
+    margin-left: 20px;
+    position: relative;
+    display: inline-block;
+}
+
+.server-icon {
+    border-radius: 50%;
+    height: 64px;
+    margin-left: 8px;
+    margin-top: 8px;
+    pointer-events: none;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.invite-button, .open-button {
+    position: absolute;
+    background-color: #43b581;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    margin-left: 600px;
+    margin-top: -50px;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.invite-button a, .open-button a {
+    font-size: 25px;
+    font-family: 'Roboto';
+    top: 4px;
+    left: -10px;
+}
+
+.lds-ellipsis {
+    position: sticky;
+    top: 40%;
+    left: 50%;
+    animation: 1s ease-out 0s 1 loadIn;
+}
