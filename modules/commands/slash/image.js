@@ -50,7 +50,8 @@ module.exports.execute = async (cmd, callback) => {
                 let webhook;
                 if (!webhooks || webhooks.size == 0) webhook = await channel.createWebhook('Prysm', {avatar: client.user.avatarURL()});
                 else webhook = webhooks.first();
-                webhook.send({ files: [i], username: cmd.member.displayName, avatarURL: cmd.member.user.displayAvatarURL() });
+                webhook.send({ files: [i], username: cmd.member.displayName, avatarURL: cmd.member.user.displayAvatarURL() })
+                .catch(e => callback('Failed to send: ' + e, true));
                 callback(false);
             } else {
                 callback(i);
