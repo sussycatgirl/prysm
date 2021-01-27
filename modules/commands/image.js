@@ -22,6 +22,7 @@ module.exports.userPerms    = ['EMBED_LINKS', 'ATTACH_FILES'];
  * @param {Array} args 
  */
 module.exports.execute = async (message, args) => {
+    if (!message.member.permissions.has('ATTACH_FILES')) return message.channel.send('You can\'t send images here.');
     try {
         // add the user to the database or fix somehow corrupted entries idfk
         if (typeof images.get(message.author.id) != 'object') images.set(message.author.id, {});
