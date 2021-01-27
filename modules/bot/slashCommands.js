@@ -20,8 +20,8 @@ const endpoint = process.env.SLASH_ENDPOINT || '/';
 (async function() {
     await awaitLogin();
     let interaction = new DiscordInteractions({ applicationId: client.user.id, authToken: client.token, publicKey: publicKey });
-    await updateCommandList(interaction);
-
+    await updateCommandList(interaction).catch(console.warn);
+    
     module.exports.interaction = interaction;
 })();
 
@@ -83,12 +83,24 @@ app.post(endpoint, async (req, res) => {
         try {
             if (c.sendConfirmation != 'callback') res.status(200).send({ type: c.sendConfirmation ? 5 : 2 });
             require('./statusMessage').cmdExec();
-            c.execute(cmd, (sendMsg) => {
+            c.execute(cmd, (sendMsg, ephemeral) => {
                 // retarded code
                 let isEmbed = sendMsg instanceof Discord.MessageEmbed;
                 if (c.sendConfirmation == 'callback') res.status(200).send({ 
-                    type: sendMsg == true ? 5 : sendMsg == false ? 2 : 4, 
-                    data: typeof sendMsg == 'string' || typeof sendMsg == 'object' ? (isEmbed ? { embeds: [ sendMsg ], content: '' } : { content: sendMsg }) : undefined});
+                    type: (sendMsg == true && ephemeral == false) ? 5 : (sendMsg == false && ephemeral == false) ? 2 : (ephemeral ? 3 : 4), 
+                    data: typeof sendMsg == 'string' || typeof sendMsg == 'object' ? 
+                    (
+                        isEmbed ? {
+                            embeds: [
+                                sendMsg
+                            ],
+                            content: '',
+                            flags: ephemeral ?  1 << 6 : undefined
+                        } : {
+                            content: sendMsg,
+                            flags: ephemeral ?  1 << 6 : undefined
+                        }) : undefined
+                });
             });
         } catch(e) {
             console.error(e);
@@ -207,9 +219,12 @@ async function updateCommandList(interaction) {
                     console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
                     await interaction.editApplicationCommand(cmd.id, cmd, G);
                 });
+                
+                resolve();
             });
         } catch(e) {
             console.error(e);
+            reject();
         }
     });
 }
