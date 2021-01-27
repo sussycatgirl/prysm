@@ -1,0 +1,108 @@
+[
+    {
+        "name": "skip",
+        "description": "Skip the current track"
+    },
+    {
+        "name": "loop",
+        "description": "Set the queue looping mode",
+        "options": [
+            {
+                "type": 3,
+                "name": "type",
+                "description": "Choose how the queue will be repeated",
+                "required": true,
+                "choices": [
+                    {
+                        "name": "all",
+                        "value": "all"
+                    },
+                    {
+                        "name": "single",
+                        "value": "single"
+                    },
+                    {
+                        "name": "none",
+                        "value": "none"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "play",
+        "description": "Enqueue a track from YouTube or SoundCloud",
+        "options": [
+            {
+                "type": 3,
+                "name": "track",
+                "description": "URL or search query",
+                "required": true
+            },
+            {
+                "type": 3,
+                "name": "source",
+                "description": "SoundCloud or YouTube",
+                "choices": [
+                    {
+                        "name": "YouTube",
+                        "value": "yt"
+                    },
+                    {
+                        "name": "SoundCloud",
+                        "value": "sc"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "sayas",
+        "description": "Send a message as someone else",
+        "options": [
+            {
+                "type": 6,
+                "name": "user",
+                "description": "The user to send a message as",
+                "required": true
+            },
+            {
+                "type": 3,
+                "name": "body",
+                "description": "The message you want to send",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "seek",
+        "description": "Seek to a specific position in the current track",
+        "options": [
+            {
+                "type": 4,
+                "name": "position",
+                "description": "The new player position"
+            }
+        ]
+    },
+    {
+        "name": "disconnect",
+        "description": "Disconnect the bot from voice"
+    },
+    {
+        "name": "image",
+        "description": "Post a previously saved image",
+        "options": [
+            {
+                "type": 3,
+                "name": "image",
+                "description": "The name of the image, or \"list\"",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "pause",
+        "description": "Pause/Unpause the player"
+    }
+]

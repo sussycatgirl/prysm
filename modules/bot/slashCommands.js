@@ -20,6 +20,7 @@ const endpoint = process.env.SLASH_ENDPOINT || '/';
 (async function() {
     await awaitLogin();
     let interaction = new DiscordInteractions({ applicationId: client.user.id, authToken: client.token, publicKey: publicKey });
+    await updateCommandList(interaction);
 
     module.exports.interaction = interaction;
 })();
@@ -158,3 +159,57 @@ class SlashCommand {
 module.exports.SlashCommand = SlashCommand;
 
 async function awaitLogin() { return new Promise(async (resolve, reject) => client.on('ready', resolve)) }
+
+/**
+ * 
+ * @param {import('slash-commands').DiscordInteractions} interaction 
+ */
+async function updateCommandList(interaction) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const commandList = require('../../slash_commands.json');
+            
+            // This refreshes the slash commands globally (null) and, if given, in the test guild (process.env.SLASH_TEST_GUILD_ID).
+            const gs = [null];
+            if (process.env.SLASH_TEST_GUILD_ID) gs.push(process.env.SLASH_TEST_GUILD_ID);
+            
+            gs.forEach(async G => {
+                console.log('[Slash] ' + (G ? `Updating slash commands for ${G}` : 'Updating global slash commands'));
+                let commands = await interaction.getApplicationCommands(G);
+                if (!(commands instanceof Array)) commands = [];
+                
+                const toCreate = commandList.filter(c => !commands.find(co => co.name == c.name));
+                const toDelete = commands.filter(c => !commandList.find(co => co.name == c.name));
+                const toUpdate = commands.filter(c => {
+                    const cmd = commandList.find(co => co.name == c.name);
+                    return (
+                        (
+                            cmd?.description != c?.description ||
+                            JSON.stringify(cmd.options) != JSON.stringify(c.options)
+                        ) && !toDelete.find(dCMD => dCMD.name == cmd?.name)
+                    );
+                });
+                
+                if (toCreate.length == 0 && toUpdate.length == 0 && toDelete.length == 0)
+                    console.log(`[Slash] [${G ?? 'Global'}] Commands are up to date!`);
+                
+                toCreate.forEach(async cmd => {
+                    console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
+                    await interaction.createApplicationCommand(cmd, G);
+                });
+                
+                toDelete.forEach(async cmd => {
+                    console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
+                    await interaction.deleteApplicationCommand(cmd.id, G);
+                });
+                
+                toUpdate.forEach(async cmd => {
+                    console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
+                    await interaction.editApplicationCommand(cmd.id, cmd, G);
+                });
+            });
+        } catch(e) {
+            console.error(e);
+        }
+    });
+}
