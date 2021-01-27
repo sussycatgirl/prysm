@@ -18,7 +18,7 @@ module.exports.execute = async (cmd, callback) => {
     return callback('You are not in my voice channel.');
     
     let player = shoukaku.getPlayer(guild.id);
-    if (!player) return callback("I am currently not playing.");
+    if (!player) return callback("I am currently not playing.", true);
     if (player.track) player.setPaused(!player.paused);
     else musicManager.startPlaying(guild, cmd.member.voice.channel, channel, true);
     

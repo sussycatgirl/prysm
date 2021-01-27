@@ -24,7 +24,7 @@ module.exports.execute = async (cmd, callback) => {
             ) && cmd.guild.me.voice.channelID) return message.channel.send('You are not in my voice channel.');
         
         let player = shoukaku.getPlayer(guild.id);
-        if (!player || !player.track) return callback("I am currently not playing.");
+        if (!player || !player.track) return callback("I am currently not playing.", true);
         if (player.track) player.disconnect();
         callback(true);
     } catch(e) {

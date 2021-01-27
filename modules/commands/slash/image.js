@@ -17,7 +17,7 @@ module.exports.execute = async (cmd, callback) => {
             let imgs = images.get(cmd.member.user.id);
             let count;
             if (imgs) count = Object.keys(imgs).length;
-            if (!imgs || count == 0) return callback('You don\'t have any saved images.');
+            if (!imgs || count == 0) return callback('You don\'t have any saved images.', true);
             
             let embed = new Discord.MessageEmbed()
                 .setTitle(`${count} image${count != 1 ? 's' : ''}`)

@@ -11,7 +11,8 @@ module.exports.execute = async (cmd, callback) => {
         if (!guild) return;
         const channel = guild.channels.cache.get(cmd.channel_id);
 
-        if (!channel.permissionsFor(guild.me).has('MANAGE_WEBHOOKS')) return callback('I need permission to \`Manage Webhooks\` for this command to work.');
+        if (!channel.permissionsFor(guild.me).has('MANAGE_WEBHOOKS'))
+            return callback('I need permission to \`Manage Webhooks\` for this command to work.', true);
         
         let hook = (await channel.fetchWebhooks()).array().filter(h => h.type == 'Incoming');
         if (hook.length == 0) hook = await channel.createWebhook('Prysm', { avatar: client.user.avatarURL() });

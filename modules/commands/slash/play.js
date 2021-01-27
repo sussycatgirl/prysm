@@ -27,7 +27,7 @@ module.exports.execute = async (cmd, callback) => {
         if (platform == 'sc') platform = 'soundcloud';
 
         if ((!cmd.member.voice || cmd.member.voice.channelID != guild.me.voice.channelID) && guild.me.voice.channelID || !cmd.member.voice.channel) 
-        return callback('You are not in my voice channel.');
+        return callback('You are not in my voice channel.', true);
         
         let vcPerms = cmd.member.voice.channel.permissionsFor(guild.me);
         if (!vcPerms.has("CONNECT") || !vcPerms.has("VIEW_CHANNEL")) {
@@ -51,7 +51,7 @@ module.exports.execute = async (cmd, callback) => {
         if (data.type == 'TRACK') track = data.tracks[0];
         if (data.type == 'PLAYLIST') track = data.tracks;
 
-        if (!track) return callback(`Nothing was found.`);
+        if (!track) return callback(`Nothing was found.`, true);
 
         try {
             musicManager.enqueue(track, guild, cmd.member.voice.channel, channel, true);

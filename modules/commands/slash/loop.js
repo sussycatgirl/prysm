@@ -18,7 +18,7 @@ module.exports.execute = async (cmd, callback) => {
     const channel = guild.channels.cache.get(cmd.channel_id);
     
     if ((!cmd.member.voice || cmd.member.voice.channelID != guild.me.voice.channelID) && guild.me.voice.channelID) 
-    return callback('You are not in my voice channel.');
+    return callback('You are not in my voice channel.', true);
     
     let oldLoopType = musicManager.setLooping(cmd.guild_id, type);
     
