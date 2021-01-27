@@ -12,4 +12,4 @@ its still work in progress so dont expect too much
 Do ~help
 
 # Thanks
-Thanks to @CarlosFinley for finding issues in the bot and for crashing it multiple times.
+Thanks to @CarlosFinlej for finding issues in the bot and for crashing it multiple times.
