@@ -10,3 +10,6 @@ its still work in progress so dont expect too much
 
 # Commands
 Do ~help
+
+# Thanks
+Thanks to @CarlosFinley for finding issues in the bot and for crashing it multiple times.
