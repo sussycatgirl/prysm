@@ -159,7 +159,8 @@ module.exports.execute = async (message, args) => {
                     }
 
                     if (!webhook && hooks.length < 10) webhook = await message.channel.createWebhook('Prysm', {avatar: client.user.avatarURL()});
-                    else if (hooks.length >= 10) return message.channel.send(`*I am unable to create a webhook.*`, {files: [data]});
+                    else if (hooks.length >= 10) return message.channel.send(`*I am unable to create a webhook.*`, {files: [data]})
+                    .catch(error => message.channel.send(`Failed to send: ${error}`));
 
                     webhook.send({
                         files: [data],
@@ -169,9 +170,10 @@ module.exports.execute = async (message, args) => {
                     .then(() => {
                         if (message.deletable) message.delete();
                     })
-                    .catch(e => message.channel.send(`*I am unable to create a webhook.*`, {files: [data]}));
+                    .catch(e => message.channel.send(`*I am unable to create a webhook.*`, {files: [data]})
+                    .catch(error => message.channel.send(`Failed to send: ${error}`)));
                 } else {
-                    message.channel.send({files: [data]});
+                    message.channel.send({files: [data]}).catch(error => message.channel.send(`Failed to send: ${error}`));
                 }
         }
     } catch(e) {
