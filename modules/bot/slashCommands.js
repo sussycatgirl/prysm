@@ -186,42 +186,43 @@ async function updateCommandList(interaction) {
             if (process.env.SLASH_TEST_GUILD_ID) gs.push(process.env.SLASH_TEST_GUILD_ID);
             
             gs.forEach(async G => {
-                console.log('[Slash] ' + (G ? `Updating slash commands for ${G}` : 'Updating global slash commands'));
-                let commands = await interaction.getApplicationCommands(G);
-                if (!(commands instanceof Array)) commands = [];
-                
-                const toCreate = commandList.filter(c => !commands.find(co => co.name == c.name));
-                const toDelete = commands.filter(c => !commandList.find(co => co.name == c.name));
-                const toUpdate = commands.filter(c => {
-                    const cmd = commandList.find(co => co.name == c.name);
-                    return (
-                        (
-                            cmd?.description != c?.description ||
-                            JSON.stringify(cmd.options) != JSON.stringify(c.options)
-                        ) && !toDelete.find(dCMD => dCMD.name == cmd?.name)
-                    );
-                });
-                
-                if (toCreate.length == 0 && toUpdate.length == 0 && toDelete.length == 0)
-                    console.log(`[Slash] [${G ?? 'Global'}] Commands are up to date!`);
-                
-                toCreate.forEach(async cmd => {
-                    console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
-                    await interaction.createApplicationCommand(cmd, G);
-                });
-                
-                toDelete.forEach(async cmd => {
-                    console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
-                    await interaction.deleteApplicationCommand(cmd.id, G);
-                });
-                
-                toUpdate.forEach(async cmd => {
-                    console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
-                    await interaction.editApplicationCommand(cmd.id, cmd, G);
-                });
-                
-                resolve();
+                if (G ?? process.env.NODE_ENV == 'production') { // Make it only create global commands in production
+                    console.log('[Slash] ' + (G ? `Updating slash commands for ${G}` : 'Updating global slash commands'));
+                    let commands = await interaction.getApplicationCommands(G);
+                    if (!(commands instanceof Array)) commands = [];
+                    
+                    const toCreate = commandList.filter(c => !commands.find(co => co.name == c.name));
+                    const toDelete = commands.filter(c => !commandList.find(co => co.name == c.name));
+                    const toUpdate = commands.filter(c => {
+                        const cmd = commandList.find(co => co.name == c.name);
+                        return (
+                            (
+                                cmd?.description != c?.description ||
+                                JSON.stringify(cmd.options) != JSON.stringify(c.options)
+                            ) && !toDelete.find(dCMD => dCMD.name == cmd?.name)
+                        );
+                    });
+
+                    if (toCreate.length == 0 && toUpdate.length == 0 && toDelete.length == 0)
+                        console.log(`[Slash] [${G ?? 'Global'}] Commands are up to date!`);
+
+                    toCreate.forEach(async cmd => {
+                        console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
+                        await interaction.createApplicationCommand(cmd, G);
+                    });
+
+                    toDelete.forEach(async cmd => {
+                        console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
+                        await interaction.deleteApplicationCommand(cmd.id, G);
+                    });
+
+                    toUpdate.forEach(async cmd => {
+                        console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
+                        await interaction.editApplicationCommand(cmd.id, cmd, G);
+                    });
+                }
             });
+            resolve();
         } catch(e) {
             console.error(e);
             reject();
