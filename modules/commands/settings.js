@@ -301,15 +301,17 @@ module.exports.execute = async (message, args) => {
                             case 'string':
                             case 'number':
                                 awaitingInput = true;
-                                embed.setDescription(`Enter the new value for **${page[index]}** or click ❌ to cancel.`);
+                                const fieldInfo = settingAttributes[currentPage]?.[page[index]];
+                                embed.setDescription(`Enter the new value for **${page[index]}** or click ❌ to cancel.\n\n`
+                                + `${fieldInfo.title ? `**${fieldInfo.title}**: ${fieldInfo.description}` : ''}`);
                                 embed.setFooter('Send the new value as a message into this text channel.');
                                 updateMsg();
-
+                                
                                 let mCollector = message.channel.createMessageCollector(m => m.content != "");
                                 let rCollector = new Discord.ReactionCollector(msg, r => r);
-
+                                
                                 let newContent;
-
+                                
                                 mCollector.on("end", c => {
                                     if (!rCollector.ended) rCollector.stop();
                                 });
@@ -428,7 +430,7 @@ const settingPages = {
     }
 }
 
-const welcomeFormattingRules = '`%%username%%`: The user\'s name.\n'
+const welcomeFormattingRules = '\n`%%username%%`: The user\'s name.\n'
     + '`%%usertag%%`: The user\'s 4-digit tag.\n'
     + '`%%servername%%`: This server\'s name.\n'
     + '`%%@user%%`: @mentions the user.\n'
@@ -459,7 +461,7 @@ const settingAttributes = {
     },
     "welcome": {
         "sendWelcomeMessage": {title: "Send Welcome Message", description: "Whether to send a welcome message."},
-        "sendLeaveMessage": {title: "Send leave message",     description: "Whether to send a leave message."},
+        "sendLeaveMessage": {title: "Send Leave message",     description: "Whether to send a leave message."},
         "welcomeMessageText": {title: "Welcome Text",         description: "The welcome message to send. Formatting rules: " + welcomeFormattingRules},
         "leaveMessageText": {title: "Leave message text",     description: "The message to send when a user leaves. Formatting rules: " + welcomeFormattingRules},
         "welcomeMessageChannel": {title: "Welcome Channel",   description: "The ID of the channel where you want your welcome messages to go. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
