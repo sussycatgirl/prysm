@@ -104,5 +104,9 @@
     {
         "name": "pause",
         "description": "Pause/Unpause the player"
+    },
+    {
+        "name": "getthisoffofmyscreen",
+        "description": "Get this off of your screen. Use when someone posted cringe and your parents walk in idfk"
     }
 ]
