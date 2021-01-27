@@ -97,7 +97,7 @@ module.exports.execute = async (message, args) => {
 client.on('voiceStateUpdate', async (oldState, newState) => {
     try {
         if (oldState.channelID != newState.channelID) {
-            if (newState.channelID == tempChannels.get(newState.guild?.id)?.channelID) {
+            if (tempChannels.get(newState.guild?.id)?.enabled && newState.channelID == tempChannels.get(newState.guild?.id)?.channelID) {
                 if (!newState.guild.me.permissions.has('ADMINISTRATOR')) return;
                 if (newState.member.user.bot) return;
                 
