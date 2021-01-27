@@ -14,13 +14,13 @@ module.exports = {
      */
     async execute(message, args) {
         if (!message.guild) return message.channel.send('Run this in a guild.');
-        if (!interaction) return message.channel.send('Please wait, interaction handler is not initialized yet');
+        if (!interaction) return message.channel.send('Interaction handler is not initialized yet. Use \'rlc\' dev command first.');
         const commands = await interaction.getApplicationCommands(message.guild.id);
         
         if (!commands) return message.channel.send('I can\'t find any guild specific commands here.');
         
         commands.forEach(async command => {
-            await interaction.deleteApplicationCommand(command.id).then((success) => console.log(success));
+            await interaction.deleteApplicationCommand(command.id, message.guild.id);
         });
         message.channel.send(`Deleted ${commands.length} commands.`);
     }
