@@ -19,19 +19,49 @@ module.exports.userPerms    = [];
  * @param {Array} args 
  */
 module.exports.execute = async (message, args) => {
-    if (getGuildSettings.get(message.guild, 'general.restrictPermsCMD') && !message.member.permissions.has('MANAGE_ROLES'))
-        return message.channel.send('You can\'t use this command here.');
+    let embed;
+    const targetID = getUserFromMention(args[0] || '');
+    let target = await message.guild.members.fetch(targetID);
     
-    const target = await message.guild.members.fetch(getUserFromMention(args[0] || '') || message.author);
-    
-    const embed = new Discord.MessageEmbed()
-        .setAuthor(`Permissions for ${target.user.username}`, target.user.displayAvatarURL({ dynamic: true }));
-    
-    if (message.guild.ownerID == target.id) {
-        embed.setDescription('✅ Server Owner');
+    // dont even ask
+    try {
+        if (target instanceof Discord.GuildMember || args[0] == undefined) throw 'balls';
+        
+        const permissions = new Discord.Permissions(Number(args[0]));
+        
+        embed = new Discord.MessageEmbed()
+            .setAuthor(`Permission bitfield: ${args[0]}`);
+        
+        embed = genEmbedBody(permissions, embed);
+    } catch(e) {
+        if (getGuildSettings.get(message.guild, 'general.restrictPermsCMD') && !message.member.permissions.has('MANAGE_ROLES'))
+            return message.channel.send('You can\'t use this command here.');
+        
+        if (!(target instanceof Discord.GuildMember)) target = message.member;
+        
+        embed = new Discord.MessageEmbed()
+            .setAuthor(`Permissions for ${target.user.username}`, target.user.displayAvatarURL({ dynamic: true }))
+            .setFooter(`Bitfield: ${target.permissions.bitfield}`);
+        
+        embed = genEmbedBody(target.permissions, embed, message.guild.ownerID == target.id);
     }
-    else if (target.permissions.has("ADMINISTRATOR")) {
-        embed.setDescription('✅ Administrator');
+    
+    
+    message.channel.send(embed);
+}
+
+/**
+ * 
+ * @param {Discord.Permissions} targetPerms 
+ * @param {Discord.MessageEmbed} embed
+ * @returns {Discord.MessageEmbed}
+ */
+const genEmbedBody = (targetPerms, embed, isOwner) => {
+    if (isOwner) {
+        return embed.setDescription('✅ Server Owner');
+    }
+    else if (targetPerms.has("ADMINISTRATOR")) {
+        return embed.setDescription('✅ Administrator');
     } else {
         const aliases = {
             'ADMINISTRATOR':            'Administrator',
@@ -57,7 +87,7 @@ module.exports.execute = async (message, args) => {
             'MENTION_EVERYONE':         'Mention everyone',
             'USE_EXTERNAL_EMOJIS':      'Use external emojis',
             'ADD_REACTIONS':            'Add reactions',
-
+            
             'CONNECT':                  'Connect',
             'SPEAK':                    'Speak',
             'STREAM':                   'Stream',
@@ -74,20 +104,20 @@ module.exports.execute = async (message, args) => {
         ['ADMINISTRATOR', 'VIEW_AUDIT_LOG', 'VIEW_GUILD_INSIGHTS', 'MANAGE_GUILD', 'MANAGE_ROLES', 'KICK_MEMBERS', 'BAN_MEMBERS', 'CREATE_INSTANT_INVITE',
         'CHANGE_NICKNAME', 'MANAGE_NICKNAMES', 'MANAGE_EMOJIS', 'MANAGE_WEBHOOKS']
         .forEach(perm => {
-            generalPerms += `${target.permissions.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
+            generalPerms += `${targetPerms.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
         });
         ['VIEW_CHANNEL', 'SEND_MESSAGES', 'SEND_TTS_MESSAGES', 'MANAGE_MESSAGES', 'EMBED_LINKS', 'ATTACH_FILES', 'READ_MESSAGE_HISTORY',
         'MENTION_EVERYONE', 'USE_EXTERNAL_EMOJIS', 'ADD_REACTIONS']
         .forEach(perm => {
-            textPerms += `${target.permissions.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
+            textPerms += `${targetPerms.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
         });
         ['CONNECT', 'SPEAK', 'STREAM', 'MUTE_MEMBERS', 'DEAFEN_MEMBERS', 'MOVE_MEMBERS', 'USE_VAD', 'PRIORITY_SPEAKER']
         .forEach(perm => {
-            voicePerms += `${target.permissions.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
+            voicePerms += `${targetPerms.has(perm) ? '✅' : '❌'} ${aliases[perm]}\n`;
         });
-        embed.addField('General permissions', generalPerms, true);
-        embed.addField('Text permissions', textPerms, true);
-        embed.addField('Voice permissions', voicePerms, true);
+        return embed
+            .addField('General Permissions', generalPerms, true)
+            .addField('Text Permissions', textPerms, true)
+            .addField('Voice Permissions', voicePerms, true);
     }
-    message.channel.send(embed);
 }
