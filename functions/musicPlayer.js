@@ -318,11 +318,12 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     if (!newState.member.user.bot &&
         oldState.member.user.id == newState.member.user.id &&
         oldState.channelID && !newState.channelID &&
-        oldState.channel.members.get(client.user.id) &&
-        oldState.channel.members.filter(member => !member.user.bot).size == 0 &&
-        shoukaku.players.get(oldState.channel.guild.id)) 
+        oldState.channel?.members.get(client.user.id) &&
+        oldState.channel?.members.filter(member => !member.user.bot).size == 0 &&
+        shoukaku.players.get(oldState.channel?.guild.id)) 
     {
         const timeout = setTimeout(() => {
+            if (!oldState.channel) return;
             const player = shoukaku.players.get(oldState.channel.guild.id);
             if (player) player.disconnect();
             
