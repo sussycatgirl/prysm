@@ -94,7 +94,6 @@ let loadModules = (results) => {
 }
 
 let { walk } = require('./functions/walk.js');
-const { concat } = require('lodash');
 let mods = [];
 
 let load1 = () => {
