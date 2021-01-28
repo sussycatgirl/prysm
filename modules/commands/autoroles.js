@@ -57,7 +57,7 @@ module.exports.execute = async (message, args) => {
                 guildRoles.push(roleID);
                 message.channel.send(`\`@${role.name.replace(/\`/g, '\'')}\` has been added!\n`
                     + (role.comparePositionTo(message.guild.me.roles.highest) >= 0 ?
-                    'Please note that due to this erver\'s role configuration, I may not be able to give that role to users.'
+                    'Please note that due to this server\'s role configuration, I may not be able to give that role to users.'
                     : ''), { disableMentions: 'all' });
                 
                 autoRoles.set(message.guild.id, guildRoles);
