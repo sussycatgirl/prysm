@@ -1,5 +1,6 @@
 const { SlashCommand } = require('../../bot/slashCommands');
 const Discord = require('discord.js');
+const { InteractionResponseType: resType } = require('discord-interactions');
 const { client } = require('../../../bot');
 const musicManager = require('../../../functions/musicPlayer');
 const { shoukaku } = require('../../bot/shoukakuSetup');
@@ -9,7 +10,8 @@ const Url = require('url');
 
 /**
  * 
- * @param {SlashCommand} cmd 
+ * @param {SlashCommand} cmd
+ * @param {function(String, Discord.MessageEmbed | false, resType, boolean) : void} callback
  */
 module.exports.execute = async (cmd, callback) => {
     try {
@@ -27,23 +29,19 @@ module.exports.execute = async (cmd, callback) => {
         if (platform == 'sc') platform = 'soundcloud';
 
         if ((!cmd.member.voice || cmd.member.voice.channelID != guild.me.voice.channelID) && guild.me.voice.channelID || !cmd.member.voice.channel) 
-        return callback('You are not in my voice channel.', true);
+        return callback('You are not in my voice channel.', false, resType.CHANNEL_MESSAGE, true);
         
         let vcPerms = cmd.member.voice.channel.permissionsFor(guild.me);
         if (!vcPerms.has("CONNECT") || !vcPerms.has("VIEW_CHANNEL")) {
-            callback(true);
-            return channel.send(
-                new Discord.MessageEmbed()
-                .setTitle(`I am unable to join ${message.member.voice.channel.name}.`)
-                .setDescription('Please check the channel settings and make sure I have permission to join the channel.')
-                .setImage('https://cdn.discordapp.com/attachments/749609184219103334/771754787665739776/unknown.png')
-                .setColor('36393f')
-            );
+            callback(`I am unable to join ${message.member?.voice?.channel?.name || 'your channel'}. Please check that I have the correct permissions.`, 
+            false, resType.CHANNEL_MESSAGE, true);
         }
 
         let data = await musicManager.resolveTrack(search, platform);
 
-        if (!data || !data || (data.type == 'PLAYLIST' ? !data.tracks : !data.tracks[0])) return callback(`Could not find anything${platform == 'youtube' ? ' on YouTube' : platform == 'soundcloud' ? ' on SoundCloud' : ''} for '${search.substring(0, 200)}'.`);
+        if (!data || !data || (data.type == 'PLAYLIST' ? !data.tracks : !data.tracks[0]))
+            return callback(`Could not find anything${platform == 'youtube' ? ' on YouTube' : platform == 'soundcloud' ? ' on SoundCloud' : ''} `
+            + `for '${search.substring(0, 200)}'.`, false, resType.CHANNEL_MESSAGE, true);
 
         let track;
 
@@ -51,12 +49,12 @@ module.exports.execute = async (cmd, callback) => {
         if (data.type == 'TRACK') track = data.tracks[0];
         if (data.type == 'PLAYLIST') track = data.tracks;
 
-        if (!track) return callback(`Nothing was found.`, true);
+        if (!track) return callback(`Nothing was found.`, false, resType.CHANNEL_MESSAGE, true);
 
         try {
             musicManager.enqueue(track, guild, cmd.member.voice.channel, channel, true);
         } catch(e) {
-            return callback('Something went wrong.\n' + e);
+            return callback('Something went wrong.\n' + e, false, resType.CHANNEL_MESSAGE, true);
         }
 
         let t = track;

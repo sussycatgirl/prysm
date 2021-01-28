@@ -1,9 +1,11 @@
 const { SlashCommand } = require('../../bot/slashCommands');
+const { InteractionResponseType: resType } = require('discord-interactions');
 const { client } = require('../../../bot');
 
 /**
  * 
- * @param {SlashCommand} cmd 
+ * @param {SlashCommand} cmd
+ * @param {function(String, import('discord.js').MessageEmbed | false, resType, boolean) : void} callback
  */
 module.exports.execute = async (cmd, callback) => {
     try {
@@ -12,7 +14,7 @@ module.exports.execute = async (cmd, callback) => {
         const channel = guild.channels.cache.get(cmd.channel_id);
 
         if (!channel.permissionsFor(guild.me).has('MANAGE_WEBHOOKS'))
-            return callback('I need permission to \`Manage Webhooks\` for this command to work.', true);
+            return callback('I need permission to \`Manage Webhooks\` for this command to work.', false, resType.CHANNEL_MESSAGE, true);
         
         let hook = (await channel.fetchWebhooks()).array().filter(h => h.type == 'Incoming');
         if (hook.length == 0) hook = await channel.createWebhook('Prysm', { avatar: client.user.avatarURL() });

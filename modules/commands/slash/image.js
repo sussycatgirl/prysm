@@ -1,12 +1,14 @@
 const { SlashCommand } = require('../../bot/slashCommands');
 const Discord = require('discord.js');
+const { InteractionResponseType: resType } = require('discord-interactions');
 const { client } = require('../../../bot');
 
 const images = require('../image').db;
 
 /**
  * 
- * @param {SlashCommand} cmd 
+ * @param {SlashCommand} cmd
+ * @param {function(String, Discord.MessageEmbed | false, resType, boolean) : void} callback
  */
 module.exports.execute = async (cmd, callback) => {
     try {
@@ -17,7 +19,7 @@ module.exports.execute = async (cmd, callback) => {
             let imgs = images.get(cmd.member.user.id);
             let count;
             if (imgs) count = Object.keys(imgs).length;
-            if (!imgs || count == 0) return callback('You don\'t have any saved images.', true);
+            if (!imgs || count == 0) return callback('You don\'t have any saved images.', false, resType.CHANNEL_MESSAGE, true);
             
             let embed = new Discord.MessageEmbed()
                 .setTitle(`${count} image${count != 1 ? 's' : ''}`)
@@ -32,14 +34,14 @@ module.exports.execute = async (cmd, callback) => {
                 } else embed.setFooter('Only the first 25 entries are shown.');
             });
             
-            callback(embed);
+            callback(null, embed, resType.CHANNEL_MESSAGE_WITH_SOURCE, false);
             return;
         }
         i = images.get(cmd.member.user.id);
-        if (!i || !i[imgname.value]) return callback(`<@${cmd.member.user.id}>: Could not find that image.`);
+        if (!i || !i[imgname.value]) return callback(`Could not find '${imgname.value}'.`, null, resType.CHANNEL_MESSAGE, true);
         i = i[imgname.value];
         
-        if (!cmd.botIsGuildMember) return callback(i);
+        if (!cmd.botIsGuildMember) return callback(i, false, resType.CHANNEL_MESSAGE_WITH_SOURCE, false);
         else {
             const guild = await client.guilds.fetch(cmd.guild_id);
             if (!guild) throw 'Unable to fetch guild';
@@ -51,15 +53,15 @@ module.exports.execute = async (cmd, callback) => {
                 if (!webhooks || webhooks.size == 0) webhook = await channel.createWebhook('Prysm', {avatar: client.user.avatarURL()});
                 else webhook = webhooks.first();
                 webhook.send({ files: [i], username: cmd.member.displayName, avatarURL: cmd.member.user.displayAvatarURL() })
-                .catch(e => callback('Failed to send: ' + e, true));
-                callback(false);
+                .catch(e => callback('Failed to send: ' + e, false, resType.CHANNEL_MESSAGE, true));
+                callback();
             } else {
                 callback(i);
             }
         }
     } catch(e) {
         console.error(e);
-        callback('' + e);
+        callback('' + e, null, resType.CHANNEL_MESSAGE, true);
     }
 }
 

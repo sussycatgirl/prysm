@@ -1,5 +1,6 @@
 const { SlashCommand } = require('../../bot/slashCommands');
 const Discord = require('discord.js');
+const { InteractionResponseType: resType } = require('discord-interactions');
 const { client } = require('../../../bot');
 const musicManager = require('../../../functions/musicPlayer');
 const { shoukaku } = require('../../bot/shoukakuSetup');
@@ -7,16 +8,16 @@ const getGuildSettings = require('../../../functions/getGuildSettings');
 
 /**
  * 
- * @param {SlashCommand} cmd 
+ * @param {SlashCommand} cmd
+ * @param {function(String, Discord.MessageEmbed | false, resType, boolean) : void} callback
  */
 module.exports.execute = async (cmd, callback) => {
     try {
         const guild = await client.guilds.fetch(cmd.guild_id);
         if (!guild) throw 'Unable to fetch guild';
-        const channel = guild.channels.cache.get(cmd.channel_id);
         
         let player = shoukaku.getPlayer(cmd.guild_id);
-        if (!player) return callback("I am currently not playing.", true);
+        if (!player) return callback("I am currently not playing.", false, resType.CHANNEL_MESSAGE, true);
         
         let newPos;
         if (!cmd.data.options) newPos = null; else newPos = cmd.data.options.find(d => d.name == 'position').value;
@@ -27,7 +28,7 @@ module.exports.execute = async (cmd, callback) => {
         }
 
         if ((!cmd.member.voice || cmd.member.voice.channelID != guild.me.voice.channelID) && guild.me.voice.channelID) 
-        return callback('You are not in my voice channel.', true);
+        return callback('You are not in my voice channel.', false, resType.CHANNEL_MESSAGE, true);
 
         newPos = Math.round(newPos);
 
@@ -36,16 +37,16 @@ module.exports.execute = async (cmd, callback) => {
 
         player.seekTo(newPos * 1000)
         .then(seeked => {
-            if (seeked) return callback(!getGuildSettings.get(cmd.guild_id, 'music.silent'));
-            else return callback('Failed to seek.');
+            if (seeked) return callback(null, false, getGuildSettings.get(cmd.guild_id, 'music.silent') ? resType.ACKNOWLEDGE : resType.ACKNOWLEDGE_WITH_SOURCE);
+            else return callback('Failed to seek.', false, resType.CHANNEL_MESSAGE, true);
         })
         .catch(e => {
             console.error(e);
-            return callback('Failed to seek: ' + e);
+            return callback('Failed to seek: ' + e, false, resType.CHANNEL_MESSAGE, true);
         });
     } catch(e) {
         console.error(e);
-        callback('' + e);
+        callback('' + e, false, resType.CHANNEL_MESSAGE, true);
     }
 }
 

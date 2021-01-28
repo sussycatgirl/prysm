@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const { client } = require('../../bot');
 const config = require('../../config.json');
-const Enmap = require('enmap');
 const fs = require('fs');
 const { DiscordInteractions } = require("slash-commands");
+const { InteractionResponseFlags, InteractionResponseType } = require('discord-interactions');
 
 const bodyParser = require('body-parser');
 const Express = require('express');
+const e = require('express');
 const app = Express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -39,9 +40,7 @@ app.post(endpoint, async (req, res) => {
 
         const body = req.body;
         if (!body) return console.log('[Slash] Received POST with empty body; aborting');
-
-        console.log('[Slash] POST received');
-
+        
         // Interactions endpoint verification
         if (body.type == 1) {
             res.status(200).send({ type: 1 });
@@ -50,61 +49,71 @@ app.post(endpoint, async (req, res) => {
         }
         
         const cmd = new SlashCommand(body);
-        
-        //cmd.webhook.send('you used the command ' + cmd.command_name + ' with arguments ' + JSON.stringify(cmd.data.options));
+        console.log(`[Slash] Command invoked by ${cmd.member?.user?.id || 'unknown'}: `
+        + `/${cmd.command_name}${cmd.data.options ? ' '+JSON.stringify(cmd.data.options) : ''}, `
+        + `guild: ${cmd.guild_id || 'DMs'} / ${cmd.channel_id}, member: ${cmd.botIsGuildMember}`);
         
         let c = '../commands/slash/' + (commands.filter(c => c.split('.js')[0].toLowerCase() == cmd.command_name));
         
         /**
          * Interaction response codes:
          * https://discord.com/developers/docs/interactions/slash-commands#interaction-interaction-response
+         * 
+         * Message flags:
+         *  1 << 6: ephemeral
          */
         
         let exists = true;
         try { require(c) } catch(e) { exists = false }
         c = exists ? require(c) : null;
         if (!c || !c.execute || typeof c.execute != 'function') return res.status(200).send({ 
-            type: 4, 
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE, 
             data: { 
                 content: `Error: The command \`${cmd.command_name}\` does not exist or is misconfigured.`,
-                flags: 1 << 6
+                flags: InteractionResponseFlags.EPHEMERAL
             } 
         });
 
-        const inviteURL = `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=1073216886&guild_id=${cmd.guild_id}`;
-        if (c.requireGuildMember && !cmd.botIsGuildMember) return res.status(200).send({
-            type: 3,
-            data: {
-                content: `To use this command, I need to be a member of this server. Click [here](${inviteURL}) to invite me.`,
-                flags: 1 << 6
-            }
-        });
+        if (c.requireGuildMember && !cmd.botIsGuildMember) {
+            const inviteURL = `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=1073216886&guild_id=${cmd.guild_id}`;
+            res.status(200).send({
+                type: InteractionResponseType.CHANNEL_MESSAGE,
+                data: {
+                    content: `To use this command, I need to be a member of this server. Click [here](${inviteURL}) to invite me.`,
+                    flags: InteractionResponseFlags.EPHEMERAL
+                }
+            });
+            return;
+        }
 
         try {
             if (c.sendConfirmation != 'callback') res.status(200).send({ type: c.sendConfirmation ? 5 : 2 });
             require('./statusMessage').cmdExec();
-            c.execute(cmd, (sendMsg, ephemeral) => {
-                // retarded code
-                let isEmbed = sendMsg instanceof Discord.MessageEmbed;
-                if (c.sendConfirmation == 'callback') res.status(200).send({ 
-                    type: (sendMsg == true && ephemeral == false) ? 5 : (sendMsg == false && ephemeral == false) ? 2 : (ephemeral ? 3 : 4), 
-                    data: typeof sendMsg == 'string' || typeof sendMsg == 'object' ? 
-                    (
-                        isEmbed ? {
-                            embeds: [
-                                sendMsg
-                            ],
-                            content: '',
-                            flags: ephemeral ?  1 << 6 : undefined
-                        } : {
-                            content: sendMsg,
-                            flags: ephemeral ?  1 << 6 : undefined
-                        }) : undefined
-                });
+            c.execute(cmd, (msg, embed, responseType, ephemeral) => {
+                if (c.sendConfirmation == 'callback') {
+                    let responseData = {}
+                    
+                    responseData.type = responseType || InteractionResponseType.ACKNOWLEDGE;
+                    
+                    if (responseData.type == InteractionResponseType.CHANNEL_MESSAGE ||
+                        responseData.type == InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE) {
+                        responseData.data = {
+                            content: msg || undefined,
+                            embeds: embed instanceof Discord.MessageEmbed ? [ embed ] : undefined,
+                            flags: ephemeral ? InteractionResponseFlags.EPHEMERAL : 0
+                        }
+                    }
+                    
+                    res.status(200).send(responseData);
+                }
             });
         } catch(e) {
             console.error(e);
-            cmd.webhook.send(`<@${cmd.member.id}>: An error has ocurred: ${e}`);
+            
+            if (res.writable)
+            res.status(200).send({ type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE, data: { content: `Error: ${e}` } });
+            else
+                cmd.webhook.send(`/${cmd.command_name}: An error has ocurred: ${e}`);
         }
     } catch(e) {
         console.error(e);
@@ -208,17 +217,17 @@ async function updateCommandList(interaction) {
 
                     toCreate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
-                        await interaction.createApplicationCommand(cmd, G);
+                        await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Create ${cmd.name}: ${res}`));
                     });
 
                     toDelete.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
-                        await interaction.deleteApplicationCommand(cmd.id, G);
+                        await interaction.deleteApplicationCommand(cmd.id, G).then(res => !res && console.log(`Delete ${cmd.name}: ${res}`));
                     });
 
                     toUpdate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
-                        await interaction.editApplicationCommand(cmd.id, cmd, G);
+                        await interaction.editApplicationCommand(cmd.id, cmd, G).then(res => !res && console.log(`Patch ${cmd.name}: ${res}`));
                     });
                 }
             });
