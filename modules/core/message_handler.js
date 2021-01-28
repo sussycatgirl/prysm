@@ -96,7 +96,7 @@ module.exports.run = () => {
             }
 
             // Check if the bot has the required permissions to execute the command
-            if (!checkPermissions.check(command, message.guild, message)) return;
+            if (!await checkPermissions.check(command, message.guild, message)) return;
             
             // Finally, let's execute the command. Also, console log the command execution to console because why tf not
             console.log(`Shard ${client.shard.ids}: \x1b[36m[${data.db.stats.get('total_commands')}]\x1b[0m [\x1b[33m${message.author.tag}\x1b[0m/${message.guild ? `\x1b[32m${message.guild.name}\x1b[0m #\x1b[32m${message.channel.name}\x1b[0m` : '\x1b[34mDMs\x1b[0m'}]: ${commandName} ${args.join(' ')}`);
