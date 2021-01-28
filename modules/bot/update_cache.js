@@ -18,7 +18,8 @@ module.exports.run = function() {
             data.db.clientCache.guildSize = guilds;
         })
         .catch();
-            
+        
+        // Doesn't consider members from large guilds
         client.shard.fetchClientValues(`users.cache.size`)
         .then(usersArr => {
             let users = 0;
