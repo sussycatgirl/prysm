@@ -66,17 +66,17 @@ app.post(endpoint, async (req, res) => {
         if (!c || !c.execute || typeof c.execute != 'function') return res.status(200).send({ 
             type: 4, 
             data: { 
-                content: `Error: The command \`${cmd.command_name}\` does not exist or is misconfigured.` 
+                content: `Error: The command \`${cmd.command_name}\` does not exist or is misconfigured.`,
+                flags: 1 << 6
             } 
         });
 
+        const inviteURL = `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=1073216886&guild_id=${cmd.guild_id}`;
         if (c.requireGuildMember && !cmd.botIsGuildMember) return res.status(200).send({
-            type: 4, 
-            data: { 
-                embeds: [
-                    new Discord.MessageEmbed()
-                    .setDescription(`To use this command, I need to be a member of this guild. Click [here](https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=1073216886&guild_id=${cmd.guild_id}) to invite me.`)
-                ]
+            type: 3,
+            data: {
+                content: `To use this command, I need to be a member of this server. Click [here](${inviteURL}) to invite me.`,
+                flags: 1 << 6
             }
         });
 
