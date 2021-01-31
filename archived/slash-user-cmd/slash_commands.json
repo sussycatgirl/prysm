@@ -1,0 +1,84 @@
+{
+        "name": "user",
+        "description": "Get info about users",
+        "options": [
+            {
+                "name": "avatar",
+                "description": "Get the user's avatar",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "user",
+                        "description": "The target user",
+                        "type": 6,
+                        "required": true
+                    },
+                    {
+                        "name": "format",
+                        "description": "The preferred image format",
+                        "type": 6,
+                        "required": false,
+                        "options": [ "png", "jpg", "gif", "webp" ]
+                    }
+                ]
+            },
+            {
+                "name": "info",
+                "description": "Show info about the user",
+                "type": 1,
+                "options": [
+                    {
+                        "name": "user",
+                        "description": "The target user",
+                        "type": 6,
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "name": "manage",
+                "description": "Manage users",
+                "type": 2,
+                "options": [
+                    {
+                        "name": "addrole",
+                        "description": "Give a role to this user",
+                        "type": 1,
+                        "options": [
+                            {
+                                "name": "user",
+                                "description": "The target user",
+                                "type": 6,
+                                "required": true
+                            },
+                            {
+                                "name": "role",
+                                "description": "The role to give to the user",
+                                "type": 8,
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "removerole",
+                        "description": "Remove a role from this user",
+                        "type": 1,
+                        "options": [
+                            {
+                                "name": "user",
+                                "description": "The target user",
+                                "type": 6,
+                                "required": true
+                            },
+                            {
+                                "name": "role",
+                                "description": "The role to remove from the user",
+                                "type": 8,
+                                "required": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
