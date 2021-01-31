@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const Express = require('express');
 const enableWs = require('express-ws');
 const session = require('express-session');
-const ejs = require('node-ejs');
 const app = Express();
 const axios = require('axios').default;
 
