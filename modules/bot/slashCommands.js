@@ -53,15 +53,14 @@ app.post(endpoint, async (req, res) => {
         + `/${cmd.command_name}${cmd.data.options ? ' '+JSON.stringify(cmd.data.options) : ''}, `
         + `guild: ${cmd.guild_id || 'DMs'} / ${cmd.channel_id}, member: ${cmd.botIsGuildMember}`);
         
-        let c = '../commands/slash/' + (commands.filter(c => c.split('.js')[0].toLowerCase() == cmd.command_name));
-        
-        /**
-         * Interaction response codes:
-         * https://discord.com/developers/docs/interactions/slash-commands#interaction-interaction-response
-         * 
-         * Message flags:
-         *  1 << 6: ephemeral
-         */
+        // Find the correct path, considering subcommands and subcommand groups
+        let c;
+        if (cmd.data.options?.[0]?.options?.[0]?.options)
+            c = `../commands/slash/${cmd.command_name}/${cmd.data.options[0].name}/${cmd.data.options[0].options[0].name}.js`;
+        else if (cmd.data.options?.[0]?.options)
+            c = `../commands/slash/${cmd.command_name}/${cmd.data.options[0].name}.js`;
+        else
+            c = `../commands/slash/${cmd.command_name}.js`;
         
         let exists = true;
         try { require(c) } catch(e) { exists = false }
@@ -217,17 +216,19 @@ async function updateCommandList(interaction) {
 
                     toCreate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
-                        await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Create ${cmd.name}: ${res}`));
+                        await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Create ${cmd.name}: ${!!res}`));
                     });
 
                     toDelete.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
-                        await interaction.deleteApplicationCommand(cmd.id, G).then(res => !res && console.log(`Delete ${cmd.name}: ${res}`));
+                        await interaction.deleteApplicationCommand(cmd.id, G).then(res => !res && console.log(`Delete ${cmd.name}: ${!!res}`));
                     });
 
                     toUpdate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
-                        await interaction.editApplicationCommand(cmd.id, cmd, G).then(res => !res && console.log(`Patch ${cmd.name}: ${res}`));
+                        await interaction.editApplicationCommand(cmd.id, cmd, G).then(res => !res && console.log(`Patch ${cmd.name}: ${!!res}`));
+                        //await interaction.deleteApplicationCommand(cmd.id, G);
+                        //await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Patch ${cmd.name}: ${!!res}`));
                     });
                 }
             });
@@ -238,3 +239,12 @@ async function updateCommandList(interaction) {
         }
     });
 }
+
+
+/**
+ * Interaction response codes:
+ * https://discord.com/developers/docs/interactions/slash-commands#interaction-interaction-response
+ * 
+ * Message flags:
+ *  1 << 6: ephemeral
+ */
