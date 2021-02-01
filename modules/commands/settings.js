@@ -427,6 +427,17 @@ const settingPages = {
         "welcomeMessageChannel": "123456789012345678",
         "sendWelcomeDM":         false,
         "welcomeDMText":         "Welcome to %%servername%%!"
+    },
+    "logging": {
+        "enableLogging":        false,
+        "logChannel":           "123456789012345678",
+        "logSlashCommands":     false,
+        "logAllCommands":       false,
+        "logJoinLeaveEvents":   false,
+        "logMessageEdits":      false,
+        "logMessageDeletions":  false,
+        "logMemberUpdates":     false,
+        "logModerationEvents":  false
     }
 }
 
@@ -460,13 +471,24 @@ const settingAttributes = {
         "inviteOnUnban": {title: "Invite user on unban", description: "When 'DM users on unban' AND this setting is enabled, the unban notification will also include a invite link. Only works with temporary bans."}
     },
     "welcome": {
-        "sendWelcomeMessage": {title: "Send Welcome Message", description: "Whether to send a welcome message."},
-        "sendLeaveMessage": {title: "Send Leave message",     description: "Whether to send a leave message."},
-        "welcomeMessageText": {title: "Welcome Text",         description: "The welcome message to send. Formatting rules: " + welcomeFormattingRules},
-        "leaveMessageText": {title: "Leave message text",     description: "The message to send when a user leaves. Formatting rules: " + welcomeFormattingRules},
-        "welcomeMessageChannel": {title: "Welcome Channel",   description: "The ID of the channel where you want your welcome messages to go. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
-        "sendWelcomeDM": {title: "DM new users",              description: "Whether to send a direct message to new users."},
-        "welcomeDMText": {title: "DM text",                   description: "The message you want to DM to new users. Formatting rules: " + welcomeFormattingRules}
+        "sendWelcomeMessage":       {title: "Send Welcome Message", description: "Whether to send a welcome message."},
+        "sendLeaveMessage":         {title: "Send Leave message",   description: "Whether to send a leave message."},
+        "welcomeMessageText":       {title: "Welcome Text",         description: "The welcome message to send. Formatting rules: " + welcomeFormattingRules},
+        "leaveMessageText":         {title: "Leave message text",   description: "The message to send when a user leaves. Formatting rules: " + welcomeFormattingRules},
+        "welcomeMessageChannel":    {title: "Welcome Channel",      description: "The ID of the channel where you want your welcome messages to go. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
+        "sendWelcomeDM":            {title: "DM new users",         description: "Whether to send a direct message to new users."},
+        "welcomeDMText":            {title: "DM text",              description: "The message you want to DM to new users. Formatting rules: " + welcomeFormattingRules}
+    },
+    "logging": {
+        "enableLogging":        {title: "Enable logging",           description: "Enables logging in the channel specified below."},
+        "logChannel":           {title: "Log Channel",              description: "The ID of the log channel. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
+        "logSlashCommands":     {title: "Log slash commands",       description: "Logs every time a slash command is executed."},
+        "logAllCommands":       {title: "Log all Commands",         description: "Logs every time a \"normal\" (non-slash) command is executed."},
+        "logJoinLeaveEvents":   {title: "Log join/leave events",    description: "Logs every time a users joins or leaves or a bot is added or removed."},
+        "logMessageEdits":      {title: "Log message edits",        description: "Logs when a user edits a message."},
+        "logMessageDeletions":  {title: "Log message deletions",    description: "Logs when a user deletes a message."},
+        "logMemberUpdates":     {title: "Log member updates",       description: "(Currently unsupported) Logs when a user's state updates, for example when they change their name or avatar."},
+        "logModerationEvents":  {title: "Log moderation events",    description: "(Currently unsupported) Logs when moderative actions are executed, for example when a channel is created or a user gets banned."}
     }
 }
 

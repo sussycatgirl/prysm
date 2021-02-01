@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <style>
+            @import url('/assets/styles/log.css');
+        </style>
+    </head>
+    <body>
+        <h1>Message by <%= authortag %> in <%= guildname %></h1>
+        <div class="text-box">
+            <h2>Old content</h2>
+            <a class="msgContent" id="oldText"><%= oldMsg %></a>
+            <div style="height: 10px;"></div>  <!-- css is hard -->
+        </div>
+        <div class="text-box">
+            <h2>New content</h2>
+            <a class="msgContent" id="newText"><%= newMsg %></a>
+            <div style="height: 10px;"></div>
+        </div>
+    </body>
+</html>

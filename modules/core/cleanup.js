@@ -31,6 +31,9 @@ module.exports.run = () => {
     createDir('./temp');
     createDir('./temp/old_temps');
     createDir('./temp/malware');
+    createDir('./temp/guildLogs');
+    createDir('./temp/guildLogs/edited');
+    createDir('./temp/guildLogs/deleted');
     createFile('./data-storage/defaultroles.json', '{}');
 
     // Delete junk files

@@ -4,6 +4,7 @@ const config = require('../../config.json');
 const fs = require('fs');
 const { DiscordInteractions } = require("slash-commands");
 const { InteractionResponseFlags, InteractionResponseType } = require('discord-interactions');
+const { guildLog } = require('../../functions/logging');
 
 const bodyParser = require('body-parser');
 const Express = require('express');
@@ -88,6 +89,7 @@ app.post(endpoint, async (req, res) => {
         try {
             if (c.sendConfirmation != 'callback') res.status(200).send({ type: c.sendConfirmation ? 5 : 2 });
             require('./statusMessage').cmdExec();
+            guildLog(cmd.guild_id, 'slash', cmd);
             c.execute(cmd, (msg, embed, responseType, ephemeral) => {
                 if (c.sendConfirmation == 'callback') {
                     let responseData = {}

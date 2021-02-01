@@ -42,6 +42,19 @@ let server = app.listen(PORT, async () => {
     let inviteURL = `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=607505494`;
     let loginUrl = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&redirect_uri=${BASE_URL}/oauth2/authorized&response_type=code&scope=${process.env.SCOPES}&prompt=none`;
     
+    /**
+     * 
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
+    const verifyGuildMember = async (req, res) => {
+        const login = () => { res.redirect(`${loginUrl}&state=${Buffer.from(req.path).toString('base64')}`); return false }
+        const send403 = () => { res.render(__dirname + '/views/403.ejs'); return false }
+        if (!req.session['user'])
+            return login();
+        if (!(await client.guilds.fetch(req.params.serverid).catch(console.log))?.member(req.session['user']?.id)) return send403();
+        else return true;
+    }
     
     app.use('/assets', Express.static('web/views/assets'));
     
@@ -60,22 +73,41 @@ let server = app.listen(PORT, async () => {
     
     app.get('/favicon.ico', (req, res) => res.sendFile(__dirname + '/views/favicon.ico'));
     app.get('/api*', (req, res) => require('./api')(req, res));
+    
+    app.get('/dashboard/server/:serverid/logs/:type/:logid', async (req, res, next) => {
+        try {
+            if (await verifyGuildMember(req, res)) {
+                let path;
+                switch(req.params.type) {
+                    case 'edit':
+                        path = `${__dirname}/../temp/guildLogs/edited/${req.params.serverid}/${req.params.logid}.json`;
+                        if (!path || !fs.existsSync(path)) return next(); // Essentially triggers a 404
+                        res.render(__dirname + '/templates/edited_log.ejs', require(path));
+                    break;
+                    //case 'delete':
+                    //    path = `${__dirname}/../temp/guildLogs/deleted/${req.params.serverid}/${req.params.logid}.json`;
+                    //break;
+                }
+            }
+        } catch(e) {
+            console.warn(e);
+            res.status(500).send('Internal server error');
+        }
+    });
+    
     app.get('/dashboard/server/:serverid/*', async (req, res) => {
         try {
             if (!client.user) return res.status(500).send('Server is still starting!');
             
             let path = `${__dirname}/views/${req.path.replace(req.params.serverid, ':serverid')}`;
             
-            if (!req.session['user'])
-                return res.redirect(`${loginUrl}&state=${Buffer.from(req.path).toString('base64')}`);
-            let guild = await client.guilds.fetch(req.params.serverid);
-            if (!guild) return res.redirect(loginUrl + `&state=${Buffer.from(req.path).toString('base64')}`);
-            
-            res.render(path, { 
-                user: req.session['user'] || {}, 
-                inviteURL, loginUrl, guild,
-                page_b64: Buffer.from(req.path).toString('base64')
-            });
+            if (verifyGuildMember(req, res)) {
+                res.render(path, { 
+                    user: req.session['user'] || {}, 
+                    inviteURL, loginUrl, guild,
+                    page_b64: Buffer.from(req.path).toString('base64')
+                });
+            }
         } catch(e) {
             console.warn(e);
             res.status(500).send('Internal server error');

@@ -10,6 +10,7 @@ const permmutes = new Enmap({ name: 'permmutes', polling: true, fetchAll: true }
 const { tempmutes, muteroles } = require('../commands/mute');
 const { getPrefix } = require('../../functions/getPrefix');
 const getGuildSettings = require('../../functions/getGuildSettings');
+const { guildLog } = require('../../functions/logging');
 
 async function getGuildCount() {
     let serverCount = await client.shard.fetchClientValues('guilds.cache.size');
@@ -197,8 +198,8 @@ module.exports.run = function() {
             
             if (sendWelcome == true) {
                 if (!/^[0-9]{18}$/.test(channelID)) return;
-                let channel = await client.channels.cache.get(channelID);
-                if (!channel || !channel.isText || !channel.permissionsFor(channel.guild.me)?.has('SEND_MESSAGES')) return;
+                let channel = await client.channels.fetch(channelID).catch(console.warn);
+                if (!channel || !channel.isText() || channel.guild?.id != member.guild.id || !channel.permissionsFor(channel.guild.me)?.has('SEND_MESSAGES')) return;
                 
                 channel.send(parseMsg(welcomeText).substr(0, 2000)).catch(console.warn);
             }
@@ -208,6 +209,8 @@ module.exports.run = function() {
         } catch(e) {
             console.warn(e);
         }
+        
+        guildLog(member.guild, 'joinLeave', member);
     });
     client.on('guildMemberRemove', async (member) => {
         try {
@@ -232,8 +235,24 @@ module.exports.run = function() {
         } catch(e) {
             console.warn(e);
         }
+        
+        guildLog(member.guild, 'joinLeave', member);
     });
-
+    
+    // Guild logs for message updates and deletions
+    client.on('messageUpdate', (oldMsg, newMsg) => {
+        if (oldMsg.content != newMsg.content && oldMsg.guild)
+            guildLog(oldMsg.guild, 'messageEdit', { old: oldMsg, new: newMsg });
+    });
+    client.on('messageDelete', (msg) => {
+        if (msg.guild)
+            guildLog(msg.guild, 'messageDelete', { message: msg, bulk: false });
+    });
+    client.on('messageDeleteBulk', (messages) => {
+        if (messages.first()?.guild)
+            guildLog(messages.first()?.guild, 'messageDelete', { message: messages, bulk: true });
+    });
+    
     // Debug logging
     client.on('debug', info => {
         if (logDebug) console.debug(`${colors.fg.blue}[Debug] ${info}${colors.reset}`);

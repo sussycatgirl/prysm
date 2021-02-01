@@ -6,6 +6,7 @@ const checkPermissions = require('../../functions/check_permissions');
 const { getFlags } = require('../../functions/permission_flags');
 const config = require('../../config.json');
 const getGuildSettings = require("../../functions/getGuildSettings").get;
+const { guildLog } = require('../../functions/logging');
 
 module.exports.run = () => {
     
@@ -102,6 +103,7 @@ module.exports.run = () => {
             console.log(`Shard ${client.shard.ids}: \x1b[36m[${data.db.stats.get('total_commands')}]\x1b[0m [\x1b[33m${message.author.tag}\x1b[0m/${message.guild ? `\x1b[32m${message.guild.name}\x1b[0m #\x1b[32m${message.channel.name}\x1b[0m` : '\x1b[34mDMs\x1b[0m'}]: ${commandName} ${args.join(' ')}`);
             try {
                 require('../bot/statusMessage').cmdExec();
+                if (message.guild) guildLog(message.guild, 'command', message);
                 command.execute(message, args);
             } catch(e) {
                 console.log('Failed to execute command');
