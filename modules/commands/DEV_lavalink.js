@@ -35,10 +35,14 @@ module.exports = {
                 let newNode = shoukakuModule.shoukaku.nodes.get(lavaServer[0].name);
                 //shoukakuModule.addDefaultEvents(newNode);
 
+                let pass = lavaServer[0].auth;
                 let msg = message.channel.send(
                     new Discord.MessageEmbed()
                     .setTitle('New node summoned')
-                    .setDescription(`Name: ${newNode.name}\nHost: ${lavaServer[0].host}\nPort: ${lavaServer[0].port}\nPass: ${lavaServer[0].auth}`)
+                    .setDescription(`Name: ${newNode.name}\n`
+                        + `Host: ${lavaServer[0].host}\n`
+                        + `Port: ${lavaServer[0].port}\n`
+                        + `Pass: ${pass ? pass.substr(0, 6) + '\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*' : '(None)'}`)
                     .setFooter('Status: Connecting...')
                 )
 
