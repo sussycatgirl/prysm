@@ -81,7 +81,8 @@
             {
                 "type": 4,
                 "name": "position",
-                "description": "The new player position"
+                "description": "The new player position",
+                "required": true
             }
         ]
     },
