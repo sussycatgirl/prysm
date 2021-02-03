@@ -21,11 +21,7 @@ module.exports.execute = async (cmd, callback) => {
         
         let newPos;
         if (!cmd.data.options) newPos = null; else newPos = cmd.data.options.find(d => d.name == 'position').value;
-        if (!newPos) {
-            return callback(new Discord.MessageEmbed()
-            .setTitle('Current position')
-            .setDescription('your mom (placeholder)'));
-        }
+        if (newPos == undefined) return callback('Error: No position specified', false, resType.CHANNEL_MESSAGE, true);
 
         if ((!cmd.member.voice || cmd.member.voice.channelID != guild.me.voice.channelID) && guild.me.voice.channelID) 
         return callback('You are not in my voice channel.', false, resType.CHANNEL_MESSAGE, true);
