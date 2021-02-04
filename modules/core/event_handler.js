@@ -28,6 +28,8 @@ module.exports.run = function() {
             let roles = autoRoles.get(member.guild.id);
             if (!roles || !member.guild.me.permissions.has('MANAGE_ROLES')) return;
             
+            if (member.user.bot && !getGuildSettings.get(member.guild, 'moderation.autorolesAffectBots')) return; // Ignore bots
+            
             if (roles instanceof Array) {
                 roles.forEach(async role => {
                     role = await member.guild.roles.fetch(role);
@@ -203,7 +205,7 @@ module.exports.run = function() {
                 
                 channel.send(parseMsg(welcomeText).substr(0, 2000)).catch(console.warn);
             }
-            if (sendDM == true) {
+            if (sendDM == true && !member.user.bot) {
                 member.send(parseMsg(dmText).substr(0, 2000)).catch(console.warn);
             }
         } catch(e) {
