@@ -412,12 +412,13 @@ const settingPages = {
         "silent":                    false
     },
     "moderation": {
-        "dmOnMute":      true,
-        "dmOnKick":      true,
-        "dmOnBan":       true,
-        "dmOnUnmute":    false,
-        "dmOnUnban":     false,
-        "inviteOnUnban": false
+        "autorolesAffectBots":  false,
+        "dmOnMute":             true,
+        "dmOnKick":             true,
+        "dmOnBan":              true,
+        "dmOnUnmute":           false,
+        "dmOnUnban":            false,
+        "inviteOnUnban":        false
     },
     "welcome": {
         "sendWelcomeMessage":    false,
@@ -463,12 +464,13 @@ const settingAttributes = {
         "silent":                    {title: "Silent command execution",        description: "Disables some command output, for example when skipping and seeking."}
     },
     "moderation": {
-        "dmOnMute":      {title: "DM users on mute",     description: "Send a message to users when they get muted, including mute reason and duration."},
-        "dmOnKick":      {title: "DM users on kick",     description: "Message users when they get kicked from the server, including reason."},
-        "dmOnBan":       {title: "DM users on ban",      description: "Message users when they get banned, including ban duration and reason."},
-        "dmOnUnmute":    {title: "DM users on unmute",   description: "Message users when their mute expires or someone manually unmuted them."},
-        "dmOnUnban":     {title: "DM users on unban",    description: "Attempt to message a user when their ban expires or is manually removed by a moderator. This only works when the bot shares a server with the user. Only works with temporary bans."},
-        "inviteOnUnban": {title: "Invite user on unban", description: "When 'DM users on unban' AND this setting is enabled, the unban notification will also include a invite link. Only works with temporary bans."}
+        "autorolesAffectBots":  {title: "Autoroles affect bots", description: "When this is enabled, autoroles (created with ~autorole) will be also given to bots."},
+        "dmOnMute":             {title: "DM users on mute",      description: "Send a message to users when they get muted, including mute reason and duration."},
+        "dmOnKick":             {title: "DM users on kick",      description: "Message users when they get kicked from the server, including reason."},
+        "dmOnBan":              {title: "DM users on ban",       description: "Message users when they get banned, including ban duration and reason."},
+        "dmOnUnmute":           {title: "DM users on unmute",    description: "Message users when their mute expires or someone manually unmuted them."},
+        "dmOnUnban":            {title: "DM users on unban",     description: "Attempt to message a user when their ban expires or is manually removed by a moderator. This only works when the bot shares a server with the user. Only works with temporary bans."},
+        "inviteOnUnban":        {title: "Invite user on unban",  description: "When 'DM users on unban' AND this setting is enabled, the unban notification will also include a invite link. Only works with temporary bans."}
     },
     "welcome": {
         "sendWelcomeMessage":       {title: "Send Welcome Message", description: "Whether to send a welcome message."},
