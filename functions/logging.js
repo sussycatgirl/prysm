@@ -88,6 +88,7 @@ module.exports.guildLog = async (guild, logType, change) => {
                 if (!getGuildSettings(guild, 'logging.logJoinLeaveEvents') || !(change instanceof Discord.GuildMember)) return;
                 
                 const joined = !!guild.member(change.user);
+                if (joined && change.partial) await change.fetch().catch(console.warn);
                 
                 if (!change.user.bot) {
                     channel.send(
