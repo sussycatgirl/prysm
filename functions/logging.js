@@ -140,25 +140,28 @@ module.exports.guildLog = async (guild, logType, change) => {
                 const { old: oldMsg, new: newMsg } = change;
                 if (!(oldMsg instanceof Discord.Message) || !(newMsg instanceof Discord.Message)) return;
                 
+                if (newMsg.partial) await newMsg.fetch().catch(console.warn);
+                
                 const editID = String(Date.now() + Number(newMsg.id)).substr(0, 18);
                 
                 let dispOldMsg = oldMsg.content?.substr(0, 800);
                 let dispNewMsg = newMsg.content?.substr(0, 800);
                 channel.send(
                     new Discord.MessageEmbed()
-                    .setAuthor(newMsg.author.tag, newMsg.author.displayAvatarURL({ dynamic: true }))
+                    .setAuthor(newMsg.author?.tag || 'Author unknown', newMsg.author?.displayAvatarURL({ dynamic: true }))
                     .setTitle(`Message edited`)
                     .setDescription(
                         `Old message:\n\`\`\`${dispOldMsg?.replace(/\`/g, '\`\u200b') ?? '(Empty)'}${dispOldMsg != oldMsg.content ? ' ...' : ''}\`\`\`\n` +
                         `New message:\n\`\`\`${dispNewMsg?.replace(/\`/g, '\`\u200b') ?? '(Empty)'}${dispNewMsg != newMsg.content ? ' ...' : ''}\`\`\`\n` +
+                        `[Jump to message](${newMsg.url})` +
                         (process.env.WEB_BASE_URL ?
-                            `[View online](${process.env.WEB_BASE_URL}/dashboard/server/${oldMsg.guild.id}/logs/edit/${editID})` : '')
+                            ` | [View online](${process.env.WEB_BASE_URL}/dashboard/server/${oldMsg.guild.id}/logs/edit/${editID})` : '')
                     )
                     .setColor(embedColor)
                     .setTimestamp()
                 )
                 
-                let data = { oldMsg: oldMsg.content, newMsg: newMsg.content, authortag: newMsg.author.tag, guildname: guild.name }
+                let data = { oldMsg: oldMsg.content, newMsg: newMsg.content, authortag: newMsg.author?.tag || 'Unknown#0000', guildname: guild.name }
                 if (!fs.existsSync('temp/guildLogs/edited/' + oldMsg.guild.id)) await fs.promises.mkdir('temp/guildLogs/edited/' + oldMsg.guild.id);
                 fs.promises.writeFile(`temp/guildLogs/edited/${oldMsg.guild.id}/${editID}.json`, JSON.stringify(data));
             break;
@@ -173,11 +176,13 @@ module.exports.guildLog = async (guild, logType, change) => {
                         .setAuthor(message.author?.tag || 'Unknown author', message.author?.displayAvatarURL({ dynamic: true }))
                         .setTitle(`Message deleted`)
                         .setDescription(
-                            message.content ?
-                                `\`\`\`\n${message.content?.replace(/\`/g, '\`\u200b').substr(0, 2000)}\`\`\`` :
-                                message.embeds[0] ?
-                                    'Message did not contain any text.' :
-                                    'Message was either empty or its content is unknown.'
+                            (
+                                message.content ?
+                                    `\`\`\`\n${message.content?.replace(/\`/g, '\`\u200b').substr(0, 1950)}\`\`\`` :
+                                    message.embeds[0] ?
+                                        'Message did not contain any text.' :
+                                        'Message was either empty or its content is unknown.'
+                                ) + `\n[Jump to context](${message.url})`
                             )
                         .setColor(embedColor)
                         .setTimestamp()
