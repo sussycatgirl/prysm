@@ -30,6 +30,7 @@ module.exports = {
                         if (arg.toLowerCase().startsWith(str + '=')) lavaServer[0][str] = arg.substr(str.length + 1, arg.length);
                     });
                 });
+                if (lavaServer[0].auth?.toLowerCase() == 'none') lavaServer[0].auth = null;
 
                 shoukakuModule.shoukaku.addNode(lavaServer[0]);
                 let newNode = shoukakuModule.shoukaku.nodes.get(lavaServer[0].name);
