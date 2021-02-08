@@ -91,7 +91,7 @@ let server = app.listen(PORT, async () => {
             }
         } catch(e) {
             console.warn(e);
-            res.status(500).send('Internal server error');
+            if (res.writable) res.status(500).send('Internal server error');
         }
     });
     
@@ -110,7 +110,7 @@ let server = app.listen(PORT, async () => {
             }
         } catch(e) {
             console.warn(e);
-            res.status(500).send('Internal server error');
+            if (res.writable) res.status(500).send('Internal server error');
         }
     });
     
@@ -129,7 +129,7 @@ let server = app.listen(PORT, async () => {
             });
         } catch(e) {
             console.warn(e);
-            res.status(500).send('Internal server error');
+            if (res.writable) res.status(500).send('Internal server error');
         }
     });
 
@@ -140,7 +140,7 @@ let server = app.listen(PORT, async () => {
             res.status(404).render('404.ejs');
         } else {
             console.warn(error);
-            res.status(500).send('Internal Server Error');
+            if (res.writable) res.status(500).send('Internal Server Error');
         }
     });
 });
