@@ -99,6 +99,7 @@ let server = app.listen(PORT, async () => {
         try {
             if (!client.user) return res.status(500).send('Server is still starting!');
             
+            const guild = await client.guilds.fetch(req.params.serverid).catch(console.warn);
             let path = `${__dirname}/views/${req.path.replace(req.params.serverid, ':serverid')}`;
             
             if (verifyGuildMember(req, res)) {
