@@ -21,7 +21,7 @@ module.exports = {
             case 'add':
                 let lavaServer = shoukakuModule.nodePresets.LavalinkServer;
 
-                lavaServer[0].name = `node_${message.id}`;
+                lavaServer[0].name = `node_${shoukakuModule.shoukaku.nodes?.size || message.id}`;
 
                 let optionArgs = args;
                 optionArgs.shift();
