@@ -219,17 +219,23 @@ async function updateCommandList(interaction) {
 
                     toCreate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Creating command ${cmd.name}`);
-                        await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Create ${cmd.name}: ${!!res}`));
+                        await interaction.createApplicationCommand(cmd, G)
+                            .then(res => console.log(`Create ${cmd.name}:`+ JSON.stringify(res)))
+                            .catch(console.warn);
                     });
 
                     toDelete.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Deleting command ${cmd.name}`);
-                        await interaction.deleteApplicationCommand(cmd.id, G).then(res => !res && console.log(`Delete ${cmd.name}: ${!!res}`));
+                        await interaction.deleteApplicationCommand(cmd.id, G)
+                            .then(res => !res && console.log(`Delete ${cmd.name}:` + JSON.stringify(res)))
+                            .catch(console.warn);
                     });
 
                     toUpdate.forEach(async cmd => {
                         console.log(`[Slash] [${G ?? 'Global'}] Patching command ${cmd.name}`);
-                        await interaction.editApplicationCommand(cmd.id, cmd, G).then(res => !res && console.log(`Patch ${cmd.name}: ${!!res}`));
+                        await interaction.editApplicationCommand(cmd.id, cmd, G)
+                            .then(res => !res && console.log(`Patch ${cmd.name}:` + JSON.stringify(res)))
+                            .catch(console.warn);
                         //await interaction.deleteApplicationCommand(cmd.id, G);
                         //await interaction.createApplicationCommand(cmd, G).then(res => console.log(`Patch ${cmd.name}: ${!!res}`));
                     });
