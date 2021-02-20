@@ -437,6 +437,7 @@ const settingPages = {
         "logJoinLeaveEvents":   false,
         "logMessageEdits":      false,
         "logMessageDeletions":  false,
+        "logEmptyMessages":     false,
         "logMemberUpdates":     false,
         "logModerationEvents":  false
     }
@@ -482,15 +483,16 @@ const settingAttributes = {
         "welcomeDMText":            {title: "DM text",              description: "The message you want to DM to new users. Formatting rules: " + welcomeFormattingRules}
     },
     "logging": {
-        "enableLogging":        {title: "Enable logging",           description: "Enables logging in the channel specified below."},
-        "logChannel":           {title: "Log Channel",              description: "The ID of the log channel. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
-        "logSlashCommands":     {title: "Log slash commands",       description: "Logs every time a slash command is executed."},
-        "logAllCommands":       {title: "Log all Commands",         description: "Logs every time a \"normal\" (non-slash) command is executed."},
-        "logJoinLeaveEvents":   {title: "Log join/leave events",    description: "Logs every time a users joins or leaves or a bot is added or removed."},
-        "logMessageEdits":      {title: "Log message edits",        description: "Logs when a user edits a message."},
-        "logMessageDeletions":  {title: "Log message deletions",    description: "Logs when a user deletes a message."},
-        "logMemberUpdates":     {title: "Log member updates",       description: "(Currently unsupported) Logs when a user's state updates, for example when they change their name or avatar."},
-        "logModerationEvents":  {title: "Log moderation events",    description: "(Currently unsupported) Logs when moderative actions are executed, for example when a channel is created or a user gets banned."}
+        "enableLogging":        {title: "Enable logging",               description: "Enables logging in the channel specified below."},
+        "logChannel":           {title: "Log Channel",                  description: "The ID of the log channel. [Learn how to get a channel ID](https://www.swipetips.com/how-to-get-channel-id-in-discord/)"},
+        "logSlashCommands":     {title: "Log slash commands",           description: "Logs every time a slash command is executed."},
+        "logAllCommands":       {title: "Log all Commands",             description: "Logs every time a \"normal\" (non-slash) command is executed."},
+        "logJoinLeaveEvents":   {title: "Log join/leave events",        description: "Logs every time a users joins or leaves or a bot is added or removed."},
+        "logMessageEdits":      {title: "Log message edits",            description: "Logs when a user edits a message."},
+        "logMessageDeletions":  {title: "Log message deletions",        description: "Logs when a user deletes a message."},
+        "logEmptyMessages":     {title: "Log empty message updates",    description: "Logs when an empty message is deleted."},
+        "logMemberUpdates":     {title: "Log member updates",           description: "(Currently unsupported) Logs when a user's state updates, for example when they change their name or avatar."},
+        "logModerationEvents":  {title: "Log moderation events",        description: "(Currently unsupported) Logs when moderative actions are executed, for example when a channel is created or a user gets banned."}
     }
 }
 

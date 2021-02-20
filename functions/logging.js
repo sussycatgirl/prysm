@@ -142,6 +142,8 @@ module.exports.guildLog = async (guild, logType, change) => {
                 
                 if (newMsg.partial) await newMsg.fetch().catch(console.warn);
                 
+                if (!oldMsg.content && !newMsg.content) return;
+                
                 const editID = String(Date.now() + Number(newMsg.id)).substr(0, 18);
                 
                 let dispOldMsg = oldMsg.content?.substr(0, 800);
@@ -151,8 +153,8 @@ module.exports.guildLog = async (guild, logType, change) => {
                     .setAuthor(newMsg.author?.tag || 'Author unknown', newMsg.author?.displayAvatarURL({ dynamic: true }))
                     .setTitle(`Message edited`)
                     .setDescription(
-                        `Old message:\n\`\`\`${dispOldMsg?.replace(/\`/g, '\`\u200b') ?? '(Empty)'}${dispOldMsg != oldMsg.content ? ' ...' : ''}\`\`\`\n` +
-                        `New message:\n\`\`\`${dispNewMsg?.replace(/\`/g, '\`\u200b') ?? '(Empty)'}${dispNewMsg != newMsg.content ? ' ...' : ''}\`\`\`\n` +
+                        `Old message:\n\`\`\`${dispOldMsg?.replace(/\`/g, '\`\u200b') || '(Empty)'}${dispOldMsg != oldMsg.content ? ' ...' : ''}\`\`\`\n` +
+                        `New message:\n\`\`\`${dispNewMsg?.replace(/\`/g, '\`\u200b') || '(Empty)'}${dispNewMsg != newMsg.content ? ' ...' : ''}\`\`\`\n` +
                         `[Jump to message](${newMsg.url})` +
                         (process.env.WEB_BASE_URL ?
                             ` | [View online](${process.env.WEB_BASE_URL}/dashboard/server/${oldMsg.guild.id}/logs/edit/${editID})` : '')
@@ -171,6 +173,7 @@ module.exports.guildLog = async (guild, logType, change) => {
                 
                 if (!bulk) {
                     if (!(message instanceof Discord.Message)) return;
+                    if (!message.content && !getGuildSettings(guild, 'logging.logEmptyMessages') && !message.attachments?.first()) return;
                     channel.send(
                         new Discord.MessageEmbed()
                         .setAuthor(message.author?.tag || 'Unknown author', message.author?.displayAvatarURL({ dynamic: true }))
@@ -180,9 +183,14 @@ module.exports.guildLog = async (guild, logType, change) => {
                                 message.content ?
                                     `\`\`\`\n${message.content?.replace(/\`/g, '\`\u200b').substr(0, 1950)}\`\`\`` :
                                     message.embeds[0] ?
-                                        'Message did not contain any text.' :
-                                        'Message was either empty or its content is unknown.'
-                                ) + `\n[Jump to context](${message.url})`
+                                        `Message contained ${message.embeds.length} embed${message.embeds.length == 1 ? '' : 's'}` :
+                                        (
+                                            message.attachments.first() ?
+                                                `${message.attachments.size} attachment${message.attachments.size == 1 ? '' : 's'}` :
+                                                'Message was either empty or its content is unknown.'
+                                        )
+                                ) + `\n[Jump to context](${message.url}) `
+                                    + `${message.attachments?.first() ? `| [Attachment URL](${message.attachments?.first()?.url})` : ''}`
                             )
                         .setColor(embedColor)
                         .setTimestamp()
