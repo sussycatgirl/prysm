@@ -16,6 +16,9 @@ module.exports.execute = async (cmd, callback) => {
         let guild    = await client.guilds.fetch(cmd.guild_id);
         if (!(channel instanceof Discord.TextChannel)) return; // Remove this before committing as it fucks announcement channels and is simply there to unfuck intellisense
         
+        if (!cmd.member?.permissions.has('MANAGE_MESSAGES'))
+            return callback('You do not have permission to use this.', false, resType.CHANNEL_MESSAGE, true);
+        
         // Verify the input is numeric
         if (isNaN(startPos) || (endPos && isNaN(endPos)))
             return callback(`Error: Input is not numeric.`, false, resType.CHANNEL_MESSAGE, true);
