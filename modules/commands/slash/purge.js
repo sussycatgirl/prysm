@@ -54,12 +54,13 @@ module.exports.execute = async (cmd, callback) => {
             
             let messages = beforeMessages.filter(msg => afterMessages.get(msg.id));
             messages = messages.array();
-            messages.push(startMsg);
-            messages.push(endMsg);
+            if (!messages.find(msg => msg.id == startMsg.id)) messages.push(startMsg);
+            if (!messages.find(msg => msg.id == endMsg.id))   messages.push(endMsg);
             messages = messages.filter(msgFilter);
             
             channel.bulkDelete(messages)
-                .then(() => callback(`Successfully deleted ${messages.length} messages.`, false, resType.CHANNEL_MESSAGE, true));
+                .then(() => callback(`Successfully deleted ${messages.length} messages.`, false, resType.CHANNEL_MESSAGE, true))
+                .catch(e => { console.error(e); callback(`An error has occurred: ${e}`, false, resType.CHANNEL_MESSAGE, true) });
         } else {
             startPos = Math.round(Number(startPos));
             if (startPos > 100 || startPos < 1)
@@ -69,7 +70,8 @@ module.exports.execute = async (cmd, callback) => {
             const fetched = (await channel.messages.fetch({ limit: startPos }))
                 .filter(msgFilter);
             channel.bulkDelete(fetched)
-                .then(() => callback(`Successfully deleted ${fetched.size} messages.`, false, resType.CHANNEL_MESSAGE, true));
+                .then(() => callback(`Successfully deleted ${fetched.size} messages.`, false, resType.CHANNEL_MESSAGE, true))
+                .catch(e => { console.error(e); callback(`An error has occurred: ${e}`, false, resType.CHANNEL_MESSAGE, true) });
         }
     } catch(e) {
         console.warn(e);

@@ -20,7 +20,14 @@ module.exports.execute = async (cmd, callback) => {
         if (hook.length == 0) hook = await channel.createWebhook('Prysm', { avatar: client.user.avatarURL() });
         else hook = hook[0];
         const member = await guild.members.fetch(cmd.data.options.filter(option => option.name == 'user')[0].value);
-        hook.send(cmd.data.options.filter(option => option.name == 'body')[0].value, { avatarURL: member.user.displayAvatarURL({ dynamic: true }), username: member.displayName });
+        hook.send(cmd.data.options.filter(option => option.name == 'body')[0].value, {
+                avatarURL: member.user.displayAvatarURL({ dynamic: true }),
+                username: member.displayName
+            })
+            .catch(e => {
+                console.error(e);
+                callback(`An error has occurred: ${e}`, false, resType.CHANNEL_MESSAGE, true);
+            });
         callback(false);
     } catch(e) {
         console.error(e);

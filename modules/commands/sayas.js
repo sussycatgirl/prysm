@@ -36,15 +36,17 @@ module.exports.execute = async (message, args) => {
         return;
     }
 
-    message.delete();
-
     function sendHook(webhook) {
         let nick;
         if (message.guild.members.cache.get(target.id).nickname == null) nick = target.username; else nick = message.guild.members.cache.get(target.id).nickname;
         webhook.send(msg, {
             username: nick,
             avatarURL: target.displayAvatarURL()
-        });
+        })
+        .catch(e => {
+            message.channel.send(`An error has occurred: ${e}`);
+        })
+        .then(() => message.delete().catch(console.error));
     }
     
     let webhook;
