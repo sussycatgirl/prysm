@@ -50,7 +50,8 @@ module.exports.execute = async (message, args) => {
             .setDescription(`Searching ${platform == 'youtube' ? ' on YouTube...' : platform == 'soundcloud' ? ' on SoundCloud...' : '...'}`)
             .setColor('2F3136');
         
-    if (getGuildSettings.get(message.guild, 'music.surpressEmbed')) message.suppressEmbeds(true);
+        if (getGuildSettings.get(message.guild, 'music.surpressEmbed') &&
+            message.channel.permissionsFor(client.user).has('MANAGE_MESSAGES')) message.suppressEmbeds(true);
     } 
     
     let msg = await message.channel.send(searchEmbed);
