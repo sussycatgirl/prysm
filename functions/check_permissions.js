@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const client = require('../bot').client;
-const { log } = require('./logging.js');
 
 const checkOverwrites = [
 	"ADD_REACTIONS",
@@ -21,12 +20,12 @@ const checkOverwrites = [
  * @param {Discord.Message} message
  */
 module.exports.check = async (command, guild, message) => {
-	if (command.perms && !command.reqPerms) {
-		return false;
-	}
 
 	// Always return true if message was sent in DMs
 	if (!guild) return true;
+
+	// Return when the bot can't send messages
+	if (!message.channel.permissionsFor(guild.me).has('SEND_MESSAGES')) return false;
 
 	// Permission check happens here - Bot only
     let reqPerms = new Discord.Permissions(0);
