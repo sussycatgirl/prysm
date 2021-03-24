@@ -13,26 +13,23 @@ client.on('message', async message => {
             ) return;
         
         // discord.js sticker support when
-        // check if message contains no text, and if it does, request full message from api to check for stickers
-        if (!message.content) {
-            let msg = await axios.get(
-                `https://discord.com/api/channels/${message.channel.id}/messages/${message.id}`,
-                { headers:
-                    {
-                        'Authorization': `Bot ${client.token}`
-                    }
+        let msg = await axios.get(
+            `https://discord.com/api/channels/${message.channel.id}/messages/${message.id}`,
+            { headers:
+                {
+                    'Authorization': `Bot ${client.token}`
                 }
-            ).catch(console.warn);
-            
-            if (msg.data?.stickers != undefined) {
-                if (message.deletable) {
-                    message.delete({ reason: 'sticker begone' })
-                        .catch(console.warn);
-                    
-                    message.channel.send(`<@${message.author.id}>, stickers are not allowed here`)
-                        .then(m => m.delete({ timeout: 2000 }))
-                        .catch(console.warn);
-                }
+            }
+        ).catch(console.warn);
+        
+        if (msg.data?.stickers != undefined) {
+            if (message.deletable) {
+                message.delete({ reason: 'sticker begone' })
+                    .catch(console.warn);
+                
+                message.channel.send(`<@${message.author.id}>, stickers are not allowed here`)
+                    .then(m => m.delete({ timeout: 2000 }))
+                    .catch(console.warn);
             }
         }
     } catch(e) {
