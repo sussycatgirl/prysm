@@ -5,7 +5,13 @@ const { get: getGuildSettings } = require('../../functions/getGuildSettings');
 
 client.on('message', async message => {
     try {
-        if (!message.guild || !getGuildSettings(message.guild, 'censorship.blockStickers')) return;
+        if (!message.guild ||
+            !getGuildSettings(message.guild, 'censorship.blockStickers') ||
+            (
+                message.channel.permissionsFor(message.member)?.has('MANAGE_MESSAGES') &&
+                getGuildSettings(message.guild, 'censorship.allowStickersForMods'))
+            ) return;
+        
         // discord.js sticker support when
         // check if message contains no text, and if it does, request full message from api to check for stickers
         if (!message.content) {

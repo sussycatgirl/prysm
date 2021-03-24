@@ -442,7 +442,8 @@ const settingPages = {
         "logModerationEvents":  false
     },
     "censorship": {
-        "blockStickers": false
+        "blockStickers":        false,
+        "allowStickersForMods": false
     }
 }
 
@@ -498,7 +499,8 @@ const settingAttributes = {
         "logModerationEvents":  {title: "Log moderation events",        description: "(Currently unsupported) Logs when moderative actions are executed, for example when a channel is created or a user gets banned."}
     },
     "censorship": {
-        "blockStickers": {title: "Block stickers",  description: "Block those annoying stickers Discord introduced a while ago"}
+        "blockStickers": {title: "Block stickers",  description: "Block those annoying stickers Discord introduced a while ago"},
+        "allowStickersForMods": {title: "Mods can use stickers", description: "Allow anyone with **Manage Messages** permission to bypass the **Block Stickers** option."}
     }
 }
 
