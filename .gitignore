@@ -125,3 +125,5 @@ modules/external_commands
 modules/external_modules
 
 sessions
+
+.idea/*

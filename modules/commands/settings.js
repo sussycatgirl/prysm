@@ -440,6 +440,9 @@ const settingPages = {
         "logEmptyMessages":     false,
         "logMemberUpdates":     false,
         "logModerationEvents":  false
+    },
+    "censorship": {
+        "blockStickers": false
     }
 }
 
@@ -493,6 +496,9 @@ const settingAttributes = {
         "logEmptyMessages":     {title: "Log empty message updates",    description: "Logs when an empty message is deleted."},
         "logMemberUpdates":     {title: "Log member updates",           description: "(Currently unsupported) Logs when a user's state updates, for example when they change their name or avatar."},
         "logModerationEvents":  {title: "Log moderation events",        description: "(Currently unsupported) Logs when moderative actions are executed, for example when a channel is created or a user gets banned."}
+    },
+    "censorship": {
+        "blockStickers": {title: "Block stickers",  description: "Block those annoying stickers Discord introduced a while ago"}
     }
 }
 
