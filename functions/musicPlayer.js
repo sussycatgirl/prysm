@@ -337,9 +337,9 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     // This clears the disconnect timeout for a channel once someone joins it
     if (!newState.member.user.bot &&
         newState.channelID &&
-        newState.channel.members.get(client.user.id) &&
+        newState.channel?.members.get(client.user.id) &&
         shoukaku.players.get(newState.guild.id) &&
-        newState.channel.members.filter(member => !member.user.bot).size > 0) 
+        newState.channel?.members.filter(member => !member.user.bot).size > 0) 
         {
             if (leaveTimeouts[newState.guild.id]) {
                 clearTimeout(leaveTimeouts[newState.guild.id]);
