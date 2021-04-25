@@ -4,7 +4,6 @@ const { getTimeInput } = require('../../functions/getTimeInput');
 const Enmap = require('enmap');
 const { getFlags } = require('../../functions/permission_flags');
 const config = require('../../config.json');
-const { neutronMassDependencies, help } = require('mathjs');
 const reminders = new Enmap({ name: 'reminders', polling: true, fetchAll: true });
 
 module.exports.name         = 'remindme';

@@ -14,22 +14,26 @@ module.exports = {
             reminders.set(user.id, {});
             userReminders = reminders.get(user.id);
         };
+        
         userReminders[message.id] = {}; 
         userReminders[message.id].time = time;
         userReminders[message.id].msg = msg;
-        userReminders[message.id].url = message.url;
         userReminders[message.id].createdAt = message.createdTimestamp;
+        userReminders[message.id].url = message.url;
         reminders.set(user.id, userReminders);
-
+        
         this.setTimeouts();
-        let doneEmbed = new Discord.MessageEmbed()
-        .setTitle('Reminder set!')
-        .setDescription(`You will receive a DM when your reminder is due.\nTo delete your reminders, type ${config.prefix}remindme delall.`)
-        .setThumbnail('https://cdn.discordapp.com/attachments/670669491956482049/705452981101002843/checksecondary61.gif')
-        .setFooter('Reminder set for')
-        .setTimestamp(time)
-        .setColor('04d3c3');
-        message.channel.send(doneEmbed);
+        
+        if (!message.isSlash) {
+            let doneEmbed = new Discord.MessageEmbed()
+            .setTitle('Reminder set!')
+            .setDescription(`You will receive a DM when your reminder is due.\nTo delete your reminders, type ${config.prefix}remindme delall.`)
+            .setThumbnail('https://cdn.discordapp.com/attachments/670669491956482049/705452981101002843/checksecondary61.gif')
+            .setFooter('Reminder set for')
+            .setTimestamp(time)
+            .setColor('04d3c3');
+            message.channel.send(doneEmbed);
+        }
     },
     delReminder(user, time, timer) {
 
@@ -55,10 +59,9 @@ module.exports = {
                         .setTitle('Here\'s your reminder!')
                         .setDescription(
                             `${details.msg ? `> ${
-                                details.msg.replace(new RegExp('\n', 'g'), '')}\n[Jump to message](${details.url})` : `You didn't set a message, click [here](${details.url}) to show context`
+                                details.msg.replace(new RegExp('\n', 'g'), '')}\n${details.url ? `[Jump to message](${details.url})` : ''}` : `You didn't set a message, click [here](${details.url}) to show context`
                             }`
                         )
-                        .setFooter(`You received this message because you used the ${getPrefix()}remindme command.`)
                         .setTimestamp(details.createdAt)
                         .setColor('4f545c')
                         if (client.users.cache.get(u)) client.users.cache.get(u).send(mesg).catch(console.warn);
