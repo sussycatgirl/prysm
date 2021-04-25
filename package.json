@@ -41,7 +41,7 @@
     "express-ws": "^4.0.0",
     "fs-extra": "^9.0.1",
     "hastebin": "^0.2.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mathjs": "^8.1.1",
     "nice-try": "^3.0.0",
     "node-virustotal": "^3.32.0",
