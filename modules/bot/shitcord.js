@@ -33,7 +33,7 @@ let fetch_api_status = () => new Promise((resolve, reject) => {
 client.on('message', async message => {
     if (message.channel.type == 'text' &&
         message.channel.permissionsFor(message.guild.me).has('SEND_MESSAGES') &&
-        message.channel.permissionsFor(message.guild.me).has('READ_MESSAGES') &&
+        message.channel.permissionsFor(message.guild.me).has('VIEW_CHANNEL') &&
         message.channel.permissionsFor(message.guild.me).has('EMBED_LINKS')
     ) {
         // Ensure this is only sent once every 10 minutes
