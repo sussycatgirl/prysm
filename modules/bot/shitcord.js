@@ -46,7 +46,7 @@ client.on('message', async message => {
                 
                 let ping = Math.floor(responseTime?.summary?.mean) || 'Unknown ';
                 
-                if (summary?.status?.indicator != 'none') {
+                if (summary?.status?.indicator && summary?.status?.indicator != 'none') {
                     send_status_cooldown[message.channel.id] = Date.now();
                     
                     let embed = new MessageEmbed()
