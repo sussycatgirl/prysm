@@ -28,7 +28,7 @@ module.exports.execute = async function(message, args) {
             const embedColor = '2f3136';
             const helpPages = [ /*
         ---------------- | Emoji |   Page name   |    Category Description    |   Array of command names | ---------------- */
-                new helpPage('🅱️', 'General',     `General command list`,         ['calc', 'cursevideo', 'feedback', 'info', 'invite', 'perms', 'ping', 'prefix', 'remindme', 'say', 'sayas', 'virustotal', 'whois']),
+                new helpPage('🅱️', 'General',     `General command list`,         ['calc', 'cursevideo', 'feedback', 'info', 'invite', 'perms', 'ping', 'prefix', 'remindme', 'say', 'sayas', 'virustotal', 'whois', 'activities']),
                 new helpPage('💬', 'Text commands', `Simple text-based commands`, ['clientid', 'edited', 'test', 'zalgo']),
                 new helpPage('⚒️', 'Moderation',  'Moderation command list',      ['ban', 'banid', 'kick', 'mute', 'unmute', 'updatemuterole', 'purge', 'snipe']),
                 new helpPage('⚙', 'Configuration','Configure Prysm',             ['autoroles', 'settings', 'setup', 'slash', 'tempchannel']),
