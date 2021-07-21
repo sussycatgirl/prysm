@@ -17,15 +17,16 @@ module.exports.run = () => {
 
                 // Some semi-random status messages
                 let activityList = [
-                    {name: `on ${guildSize} guilds`, type: "PLAYING"},
-                    {name: `you`, type: "WATCHING"},
-                    {name: `${userSize} users`, type: "WATCHING"},
-                    {name: `with you`, type: "PLAYING"},
-                    {name: `with ${userSize} ${Math.floor(Math.random()) == 0 ? 'users' : 'friends'}`, type: "PLAYING"},
-                    {name: `${guildSize} guilds`, type: "WATCHING"},
-                    {name: `${userSize} ${Math.floor(Math.random()) == 0 ? 'users' : 'people'}`, type: "WATCHING"},
-                    {name: `${getPrefix()}help`, type: "LISTENING"},
-                    {name: `${userSize} children`, type: "LISTENING"},
+                    {name: `DEPRECATED BOT DO NOT USE`, type: "PLAYING"},
+                    //{name: `on ${guildSize} guilds`, type: "PLAYING"},
+                    //{name: `you`, type: "WATCHING"},
+                    //{name: `${userSize} users`, type: "WATCHING"},
+                    //{name: `with you`, type: "PLAYING"},
+                    //{name: `with ${userSize} ${Math.floor(Math.random()) == 0 ? 'users' : 'friends'}`, type: "PLAYING"},
+                    //{name: `${guildSize} guilds`, type: "WATCHING"},
+                    //{name: `${userSize} ${Math.floor(Math.random()) == 0 ? 'users' : 'people'}`, type: "WATCHING"},
+                    //{name: `${getPrefix()}help`, type: "LISTENING"},
+                    //{name: `${userSize} children`, type: "LISTENING"},
                 ]
 
                 client.user.setActivity(activityList[index]);
