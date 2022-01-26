@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "better-sqlite3": "^7.1.2",
+    "better-sqlite3": "^7.4.5",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",
     "chrono-node": "^2.2.6",
